@@ -45,8 +45,9 @@ application {
     mainClassName = 'de.schrader.ktor.MainKt'
 }
 
-// .\gradlew serve
 // .\gradlew run
+// .\gradlew serve
+
 task serve(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = "$mainClassName"
