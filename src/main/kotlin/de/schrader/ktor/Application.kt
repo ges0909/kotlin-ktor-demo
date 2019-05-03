@@ -27,7 +27,7 @@ data class Todo(var id: Int, val name: String, val description: String, val comp
 
 val todoList = ArrayList<Todo>()
 
-fun Application.module(/*args: Array<String>*/) {
+fun Application.module() {
 
     log.info("Start Ktor server.")
 

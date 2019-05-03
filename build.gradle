@@ -39,7 +39,7 @@ dependencies {
     compile group: 'io.ktor', name: 'ktor-gson', version: "$ktor_gson_version"
     compile group: 'ch.qos.logback', name: 'logback-classic', version: "$logback_version"
 
-    compile group: 'io.ktor', name: 'ktor-server-tests', version: "$ktor_version"
+    testCompile group: 'io.ktor', name: 'ktor-server-test-host', version: "$ktor_version"
     testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test', version: "$kotlin_version"
     testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test-junit', version: "$kotlin_version"
 }

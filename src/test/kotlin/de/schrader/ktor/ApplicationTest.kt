@@ -3,10 +3,26 @@
  */
 package de.schrader.ktor
 
+import io.ktor.application.Application
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.testing.handleRequest
+import io.ktor.server.testing.withTestApplication
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class ApplicationTest {
 
-    @Test fun testAppHasAGreeting() {
+    @Test fun firstTest() {
+        withTestApplication(Application::module) {
+            with(handleRequest(HttpMethod.Get, "/person")) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertEquals("Test", response.content)
+            }
+            with(handleRequest(HttpMethod.Get, "/")) {
+                assertFalse(requestHandled)
+            }
+        }
     }
 }
