@@ -21,13 +21,6 @@ application {
     mainClassName = 'de.schrader.ktor.MainKt'
 }
 
-//sourceSets {
-//    main.kotlin.srcDirs = main.java.srcDirs = ['src']
-//    test.kotlin.srcDirs = test.java.srcDirs = ['test']
-//    main.resources.srcDirs = ['resources']
-//    test.resources.srcDirs = ['resources']
-//}
-
 repositories {
     jcenter()
     maven { url "https://dl.bintray.com/kotlin/ktor" }

@@ -15,7 +15,7 @@ import io.ktor.response.respondText
 import io.ktor.routing.*
 import org.slf4j.event.Level
 
-const val jsonResponse = """{
+const val jsonText = """{
     "id": 1,
     "task": "Pay water bill",
     "description": "Pay water bill today",
@@ -29,7 +29,7 @@ val todoList = ArrayList<Todo>()
 
 fun Application.module() {
 
-    log.info("Start Ktor server.")
+    log.info("Configuration ...")
 
     install(ContentNegotiation) {
         gson {
@@ -37,20 +37,29 @@ fun Application.module() {
         }
     }
 
-    /**
-     * The filter method keeps a whitelist of filters. If any of them returns true,
-     * the call is logged. If no filters are defined, everything is logged.
-     */
     install(CallLogging) {
         level = Level.INFO
-        // filter { call -> call.request.path().startsWith("/json") }
+        // Filter method keeps a whitelist of filters. If any of them returns true, the call is logged.
+        // If no filters are defined, everything is logged.
+        filter { call -> call.request.path().startsWith("/json") }
         filter { call -> call.request.path().startsWith("/person") }
         // filter { call -> call.request.path().startsWith("/todo") }
     }
 
     install(Routing) {
-        get("/json") {
-            call.respondText(jsonResponse, ContentType.Application.Json)
+    }
+
+    log.info("Routing ...")
+
+    routing {
+        route("/json") {
+            // grouping routes
+            get {
+                call.respond(mapOf("task" to "Pay water bill", "description" to "Pay water bill today"))
+            }
+            get("/text") {
+                call.respondText(jsonText, ContentType.Application.Json)
+            }
         }
         get("/person") {
             val person = Person()
