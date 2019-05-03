@@ -31,15 +31,18 @@ class ApplicationTest {
     @Test
     fun when_get_person_then_person_is_returned() {
         withTestApplication(Application::module) {
+
+            // with(handleRequest(HttpMethod.Post, "/person")) {
+            //    val person = TestPerson(name = "Vinz", age = 20)
+            // }
+
             with(handleRequest(HttpMethod.Get, "/person")) {
                 assertEquals(HttpStatusCode.OK, response.status())
                 val person = gson.fromJson(response.content, TestPerson::class.java)
                 assertEquals("Max", person.name)
                 assertEquals(30, person.age)
             }
-//            with(handleRequest(HttpMethod.Get, "/")) {
-//                assertFalse(requestHandled)
-//            }
+
         }
     }
 }
