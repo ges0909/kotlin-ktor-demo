@@ -13,6 +13,11 @@ import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.event.Level
 
 const val jsonText = """{
@@ -23,13 +28,28 @@ const val jsonText = """{
 
 data class Person(val name: String = "Max", var age: Int = 30)
 
-data class Todo(var id: Int, val name: String, val description: String, val completed: Boolean)
-
-val todoList = ArrayList<Todo>()
+object Persons : Table() {
+    val id = integer("id").autoIncrement().primaryKey() // Column<Int>
+    val name = varchar("name", 50) // Column<String>
+    val age = integer("age") // Column<Int>
+}
 
 fun Application.module() {
 
-    log.info("Configuration ...")
+    log.info("Connecting to database")
+
+    // Database.connect("jdbc:h2:mem:test", driver = "org.h2.Driver")
+    Database.connect("jdbc:h2:~/test", driver = "org.h2.Driver")
+
+    transaction {
+        SchemaUtils.create(Persons)
+//        val id = Persons.insert {
+//            it[name] = "heike"
+//            it[age] = 57
+//        } get Persons.id
+    }
+
+    log.info("Configuring ktor")
 
     install(ContentNegotiation) {
         gson {
@@ -49,11 +69,10 @@ fun Application.module() {
     install(Routing) {
     }
 
-    log.info("Routing ...")
+    log.info("Start routing")
 
     routing {
         route("/json") {
-            // grouping routes
             get {
                 call.respond(mapOf("task" to "Pay water bill", "description" to "Pay water bill today"))
             }
@@ -61,26 +80,25 @@ fun Application.module() {
                 call.respondText(jsonText, ContentType.Application.Json)
             }
         }
-        get("/person") {
-            val person = Person()
-            call.respond(person)
-        }
-        route("/todo") {
+        route("/person") {
             post {
-                val todo = call.receive<Todo>()
-                todo.id = todoList.size
-                todoList.add(todo)
-                call.respond("Added")
-
+                val person = call.receive<Person>()
+                val id = transaction {
+                    Persons.insert {
+                        it[name] = person.name
+                        it[age] = person.age
+                    } get Persons.id
+                }
+                call.respond(id)
             }
             delete("/{id}") {
-                call.respond(todoList.removeAt(call.parameters["id"]!!.toInt()))
+                //call.respond(todoList.removeAt(call.parameters["id"]!!.toInt()))
             }
             get("/{id}") {
-                call.respond(todoList[call.parameters["id"]!!.toInt()])
+                //call.respond(todoList[call.parameters["id"]!!.toInt()])
             }
             get {
-                call.respond(todoList)
+                //call.respond(todoList)
             }
         }
     }

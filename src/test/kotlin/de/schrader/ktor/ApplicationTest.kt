@@ -9,17 +9,27 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ApplicationTest {
 
+    private val gson = Gson()
+
     private data class TestPerson(val name: String, var age: Int)
 
-    private var gson = Gson()
+    @BeforeTest
+    fun setUp() {
+    }
+
+    @AfterTest
+    fun tearDown() {
+    }
 
     @Test
-    fun testGetPerson() {
+    fun when_get_person_then_person_is_returned() {
         withTestApplication(Application::module) {
             with(handleRequest(HttpMethod.Get, "/person")) {
                 assertEquals(HttpStatusCode.OK, response.status())
