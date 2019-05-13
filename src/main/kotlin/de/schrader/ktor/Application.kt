@@ -3,30 +3,26 @@ package de.schrader.ktor
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
-import io.ktor.application.log
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
+import io.ktor.features.StatusPages
 import io.ktor.gson.gson
+import io.ktor.http.HttpStatusCode
 import io.ktor.request.path
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.*
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.event.Level
 
-private data class Person(val name: String = "Max", var age: Int = 30)
+data class Person(val name: String = "Max", var age: Int = 30)
 
-private object Persons : Table() {
-    val id = integer("id").autoIncrement().primaryKey() // Column<Int>
-    val name = varchar("name", 50) // Column<String>
-    val age = integer("age") // Column<Int>
-}
-
-fun Application.module() {
-    log.info("Start application ...")
-
+fun Application.features() {
+    // log.info("Install features")
+    install(StatusPages)
     install(DefaultHeaders)
     install(ContentNegotiation) {
         gson {
@@ -35,18 +31,14 @@ fun Application.module() {
     }
     install(CallLogging) {
         level = Level.INFO
-        // Filter method keeps a whitelist of filters. If any of them returns true, the call is logged.
-        // If no filters are defined, everything is logged.
-        filter { call -> call.request.path().startsWith("/json") }
+        // if filter returns true, the call is logged; if no filters are defined, everything is logged
         filter { call -> call.request.path().startsWith("/person") }
-        // filter { call -> call.request.path().startsWith("/todo") }
     }
+}
 
-    Database.connect(url = "jdbc:h2:~/test;DATABASE_TO_UPPER=false", driver = "org.h2.Driver")
-    transaction {
-        SchemaUtils.create(Persons)
-    }
-
+fun Application.module() {
+    features()
+    Repository.init()
     routing {
         route("/person") {
             post {
@@ -58,9 +50,10 @@ fun Application.module() {
                     } get Persons.id
                 }
                 val result = transaction {
-                    Persons.select { Persons.id eq id }.first()
+                    val query = Persons.select { Persons.id eq id }
+                    query.first()
                 }
-                call.respond(result)
+                call.respond(HttpStatusCode.Created)
             }
             delete("/{id}") {
                 //call.respond(todoList.removeAt(call.parameters["id"]!!.toInt()))
