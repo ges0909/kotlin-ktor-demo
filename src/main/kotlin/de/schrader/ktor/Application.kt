@@ -6,57 +6,33 @@ import io.ktor.application.install
 import io.ktor.application.log
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
+import io.ktor.features.DefaultHeaders
 import io.ktor.gson.gson
-import io.ktor.http.ContentType
 import io.ktor.request.path
 import io.ktor.request.receive
 import io.ktor.response.respond
-import io.ktor.response.respondText
 import io.ktor.routing.*
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.event.Level
 
-const val jsonText = """{
-    "id": 1,
-    "task": "Pay water bill",
-    "description": "Pay water bill today",
-}"""
+private data class Person(val name: String = "Max", var age: Int = 30)
 
-data class Person(val name: String = "Max", var age: Int = 30)
-
-object Persons : Table() {
+private object Persons : Table() {
     val id = integer("id").autoIncrement().primaryKey() // Column<Int>
     val name = varchar("name", 50) // Column<String>
     val age = integer("age") // Column<Int>
 }
 
 fun Application.module() {
+    log.info("Start application ...")
 
-    log.info("Connecting to database")
-
-    // Database.connect("jdbc:h2:mem:test", driver = "org.h2.Driver")
-    Database.connect("jdbc:h2:~/test", driver = "org.h2.Driver")
-
-    transaction {
-        SchemaUtils.create(Persons)
-//        val id = Persons.insert {
-//            it[name] = "heike"
-//            it[age] = 57
-//        } get Persons.id
-    }
-
-    log.info("Configuring ktor")
-
+    install(DefaultHeaders)
     install(ContentNegotiation) {
         gson {
             setPrettyPrinting()
         }
     }
-
     install(CallLogging) {
         level = Level.INFO
         // Filter method keeps a whitelist of filters. If any of them returns true, the call is logged.
@@ -66,20 +42,12 @@ fun Application.module() {
         // filter { call -> call.request.path().startsWith("/todo") }
     }
 
-    install(Routing) {
+    Database.connect(url = "jdbc:h2:~/test;DATABASE_TO_UPPER=false", driver = "org.h2.Driver")
+    transaction {
+        SchemaUtils.create(Persons)
     }
 
-    log.info("Start routing")
-
     routing {
-        route("/json") {
-            get {
-                call.respond(mapOf("task" to "Pay water bill", "description" to "Pay water bill today"))
-            }
-            get("/text") {
-                call.respondText(jsonText, ContentType.Application.Json)
-            }
-        }
         route("/person") {
             post {
                 val person = call.receive<Person>()
@@ -89,7 +57,10 @@ fun Application.module() {
                         it[age] = person.age
                     } get Persons.id
                 }
-                call.respond(id)
+                val result = transaction {
+                    Persons.select { Persons.id eq id }.first()
+                }
+                call.respond(result)
             }
             delete("/{id}") {
                 //call.respond(todoList.removeAt(call.parameters["id"]!!.toInt()))
