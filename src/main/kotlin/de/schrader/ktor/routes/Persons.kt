@@ -8,72 +8,74 @@ import io.ktor.routing.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
-object PersonTable : Table("PERSON") {
+object Persons : Table("PERSON") {
     val id = integer("id").autoIncrement().primaryKey()
     val name = varchar("name", 32)
     val age = integer("age")
 }
 
-private fun PersonTable.getAll(): List<Person> = transaction {
-    PersonTable.selectAll().map { it.toPerson() }
+private fun Persons.getAll(): List<Person> = transaction {
+    Persons.selectAll().map { it.toPerson() }
 }
 
-private fun PersonTable.getById(id: Int): Person = transaction {
-    PersonTable.select { PersonTable.id eq id }.first().toPerson()
+private fun Persons.getById(id: Int): Person = transaction {
+    Persons.select { Persons.id eq id }.first().toPerson()
 }
 
-private fun PersonTable.create(person: Person): Person = transaction {
-    val id = PersonTable.insert {
+private fun Persons.create(person: Person): Person = transaction {
+    val id = Persons.insert {
         it[name] = person.name
         it[age] = person.age
-    } get PersonTable.id
-    PersonTable.select { PersonTable.id eq id }.first().toPerson()
+    } get Persons.id
+    Persons.select { Persons.id eq id }.first().toPerson()
 }
 
-private fun PersonTable.update(person: Person): Person = transaction {
-    PersonTable.update({ PersonTable.id eq person.id }) {
+private fun Persons.update(id: Int, person: Person): Person = transaction {
+    Persons.update({ Persons.id eq id }) {
         it[name] = person.name
         it[age] = person.age
     }
     person
 }
 
-private fun PersonTable.delete(id: Int) = transaction {
-    PersonTable.deleteWhere { PersonTable.id eq id }
+private fun Persons.delete(id: Int) = transaction {
+    Persons.deleteWhere { Persons.id eq id }
 }
 
 private fun ResultRow.toPerson() = Person(
-    id = this[PersonTable.id],
-    name = this[PersonTable.name],
-    age = this[PersonTable.age]
+    name = this[Persons.name],
+    age = this[Persons.age]
 )
 
-private data class Person(val id: Int, val name: String, var age: Int)
+data class Person(val name: String, var age: Int)
 
 fun Route.persons() {
+
     route("/persons") {
+
         get {
-            call.respond(HttpStatusCode.OK, PersonTable.getAll())
+            call.respond(HttpStatusCode.OK, Persons.getAll())
         }
 
         get("/{id}") {
             val id = call.parameters["id"]!!.toInt()
-            call.respond(HttpStatusCode.OK, PersonTable.getById(id))
+            call.respond(HttpStatusCode.OK, Persons.getById(id))
         }
 
         post {
             val person = call.receive<Person>()
-            call.respond(HttpStatusCode.Created, PersonTable.create(person))
+            call.respond(HttpStatusCode.Created, Persons.create(person))
         }
 
-        put {
+        put("/{id}") {
+            val id = call.parameters["id"]!!.toInt()
             val person = call.receive<Person>()
-            call.respond(HttpStatusCode.OK, PersonTable.update(person))
+            call.respond(HttpStatusCode.OK, Persons.update(id, person))
         }
 
         delete("/{id}") {
             val id = call.parameters["id"]!!.toInt()
-            PersonTable.delete(id)
+            Persons.delete(id)
             call.respond(HttpStatusCode.NoContent)
         }
     }

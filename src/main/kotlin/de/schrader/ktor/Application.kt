@@ -1,6 +1,6 @@
 package de.schrader.ktor
 
-import de.schrader.ktor.routes.PersonTable
+import de.schrader.ktor.routes.Persons
 import de.schrader.ktor.routes.persons
 import io.ktor.application.Application
 import io.ktor.application.install
@@ -26,6 +26,7 @@ fun Application.module() {
             setPrettyPrinting()
         }
     }
+    // install(Locations)
     install(CallLogging) {
         level = Level.INFO
         // if filter returns true, the call is logged; if no filters are defined, everything is logged
@@ -34,7 +35,7 @@ fun Application.module() {
 
     Database.connect(url = "jdbc:h2:~/test;DATABASE_TO_UPPER=false", driver = "org.h2.Driver")
     transaction {
-        SchemaUtils.create(PersonTable)
+        SchemaUtils.create(Persons)
     }
 
     routing {
