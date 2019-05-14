@@ -1,7 +1,7 @@
 package de.schrader.ktor
 
-import de.schrader.ktor.domain.Persons
-import de.schrader.ktor.route.persons
+import de.schrader.ktor.routes.PersonTable
+import de.schrader.ktor.routes.persons
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.features.CallLogging
@@ -34,7 +34,7 @@ fun Application.module() {
 
     Database.connect(url = "jdbc:h2:~/test;DATABASE_TO_UPPER=false", driver = "org.h2.Driver")
     transaction {
-        SchemaUtils.create(Persons)
+        SchemaUtils.create(PersonTable)
     }
 
     routing {
