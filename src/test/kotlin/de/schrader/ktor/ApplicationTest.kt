@@ -35,7 +35,7 @@ class ApplicationTest {
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             setBody(gson.toJson(TestPerson(name = "Vinz", age = 20)))
         }) {
-            assertEquals(HttpStatusCode.OK, response.status())
+            assertEquals(HttpStatusCode.Created, response.status())
             // val person = gson.fromJson(response.content, TestPerson::class.java)
         }
 
