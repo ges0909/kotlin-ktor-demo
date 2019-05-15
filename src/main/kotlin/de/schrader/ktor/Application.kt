@@ -22,7 +22,7 @@ import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.slf4j.event.Level
 
-fun Application.module() {
+fun Application.main() {
     // log.info("Install features")
 
     install(StatusPages)
