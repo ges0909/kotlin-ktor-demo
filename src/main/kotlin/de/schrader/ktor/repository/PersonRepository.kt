@@ -1,16 +1,10 @@
 package de.schrader.ktor.repository
 
-import de.schrader.ktor.route.Person
+import de.schrader.ktor.controller.Person
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class PersonRepository {
-
-    init {
-        transaction {
-            SchemaUtils.create(PersonRepository.DatabaseTable)
-        }
-    }
 
     object DatabaseTable : Table("PERSON") {
         val id = integer("id").autoIncrement().primaryKey()

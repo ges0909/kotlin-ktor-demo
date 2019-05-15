@@ -1,4 +1,4 @@
-package de.schrader.ktor.route
+package de.schrader.ktor.controller
 
 import de.schrader.ktor.service.PersonService
 import io.ktor.application.call
@@ -17,23 +17,27 @@ fun Route.persons() {
     route("/persons") {
 
         get {
-            call.respond(HttpStatusCode.OK, personService.get())
+            val person = personService.get()
+            call.respond(HttpStatusCode.OK, person)
         }
 
         get("/{id}") {
             val id = call.parameters["id"]!!.toInt()
-            call.respond(HttpStatusCode.OK, personService.getById(id))
+            val person = personService.getById(id)
+            call.respond(HttpStatusCode.OK, person)
         }
 
         post {
             val person = call.receive<Person>()
-            call.respond(HttpStatusCode.Created, personService.create(person))
+            val person_ = personService.create(person)
+            call.respond(HttpStatusCode.Created, person_)
         }
 
         put("/{id}") {
             val id = call.parameters["id"]!!.toInt()
             val person = call.receive<Person>()
-            call.respond(HttpStatusCode.OK, personService.update(id, person))
+            personService.update(id, person)
+            call.respond(HttpStatusCode.OK)
         }
 
         delete("/{id}") {

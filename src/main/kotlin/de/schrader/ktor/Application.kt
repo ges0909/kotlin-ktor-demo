@@ -1,9 +1,11 @@
 package de.schrader.ktor
 
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import de.schrader.ktor.repository.PersonRepository
-import de.schrader.ktor.route.persons
+import de.schrader.ktor.controller.persons
 import de.schrader.ktor.service.PersonService
-import de.schrader.ktor.service.impl.PersonServiceImpl
+import de.schrader.ktor.service.PersonServiceImpl
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.features.CallLogging
@@ -14,14 +16,11 @@ import io.ktor.gson.gson
 import io.ktor.request.path
 import io.ktor.routing.routing
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.slf4j.event.Level
-
-val appModule = module {
-    single<PersonService> { PersonServiceImpl(get()) } // get() resolves PersonRepository
-    single { PersonRepository() }
-}
 
 fun Application.module() {
     // log.info("Install features")
@@ -43,12 +42,28 @@ fun Application.module() {
     }
     // install(Locations)
 
-    Database.connect(url = "jdbc:h2:~/test;DATABASE_TO_UPPER=false", driver = "org.h2.Driver")
-//    transaction {
-//        SchemaUtils.create(PersonRepository.DatabaseTable)
-//    }
+    Database.connect(hikari())
+    transaction {
+        SchemaUtils.create(PersonRepository.DatabaseTable)
+    }
 
     routing {
         persons()
     }
+}
+
+private val appModule = module {
+    single<PersonService> { PersonServiceImpl(get()) } // get() resolves PersonRepository
+    single { PersonRepository() }
+}
+
+private fun hikari(): HikariDataSource {
+    val config = HikariConfig()
+    config.driverClassName = "org.h2.Driver"
+    config.jdbcUrl = "jdbc:h2:~/test"
+    config.maximumPoolSize = 3
+    config.isAutoCommit = false
+    config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
+    config.validate()
+    return HikariDataSource(config)
 }

@@ -21,7 +21,7 @@ class ApplicationTest {
 
     private val gson = Gson()
 
-    private data class TestPerson(val name: String, var age: Int)
+    data class TestPerson(val name: String, var age: Int)
 
     @BeforeTest fun setUp() {
     }
@@ -41,7 +41,7 @@ class ApplicationTest {
 
         with(handleRequest(HttpMethod.Get, "/person")) {
             assertEquals(HttpStatusCode.OK, response.status())
-            val person = gson.fromJson(response.content, TestPerson::class.java)
+            /*val person =*/ gson.fromJson(response.content, TestPerson::class.java)
 //            assertEquals("Max", person.name)
 //            assertEquals(30, person.age)
         }
