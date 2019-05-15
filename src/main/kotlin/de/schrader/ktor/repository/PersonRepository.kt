@@ -6,6 +6,12 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class PersonRepository {
 
+    init {
+        transaction {
+            SchemaUtils.create(PersonRepository.DatabaseTable)
+        }
+    }
+
     object DatabaseTable : Table("PERSON") {
         val id = integer("id").autoIncrement().primaryKey()
         val name = varchar("name", 32)

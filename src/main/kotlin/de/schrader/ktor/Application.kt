@@ -14,8 +14,6 @@ import io.ktor.gson.gson
 import io.ktor.request.path
 import io.ktor.routing.routing
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.slf4j.event.Level
@@ -46,9 +44,9 @@ fun Application.module() {
     // install(Locations)
 
     Database.connect(url = "jdbc:h2:~/test;DATABASE_TO_UPPER=false", driver = "org.h2.Driver")
-    transaction {
-        SchemaUtils.create(PersonRepository.DatabaseTable)
-    }
+//    transaction {
+//        SchemaUtils.create(PersonRepository.DatabaseTable)
+//    }
 
     routing {
         persons()
