@@ -3,6 +3,7 @@ buildscript {
 
     ext.ktor_version = '1.1.5'
     ext.ktor_gson_version = '1.1.4'
+    ext.ktor_koin_version = '2.0.0-GA'
     // ext.ktor_locations_version = '1.2.0-rc2'
 
     ext.logback_version = '1.3.0-alpha4'
@@ -14,11 +15,11 @@ buildscript {
     ext.shadow_version = '5.0.0'
 
     repositories {
-        mavenCentral()
+        jcenter()
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath group: 'org.jetbrains.kotlin', name: 'kotlin-gradle-plugin', version: "$kotlin_version"
     }
 }
 
@@ -42,6 +43,8 @@ dependencies {
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: "$kotlin_version"
     compile group: 'io.ktor', name: 'ktor-server-netty', version: "$ktor_version"
     compile group: 'io.ktor', name: 'ktor-gson', version: "$ktor_gson_version"
+    compile group: 'org.koin', name: 'koin-ktor', version: "$ktor_koin_version"
+
     // compile group: 'io.ktor', name: 'ktor-locations', version: "$ktor_locations_version"
 
     compile group: 'ch.qos.logback', name: 'logback-classic', version: "$logback_version"
