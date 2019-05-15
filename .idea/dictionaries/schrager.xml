@@ -7,10 +7,12 @@
       <w>hikari</w>
       <w>jdbc</w>
       <w>johnrengelman</w>
+      <w>koin</w>
       <w>ktor</w>
       <w>schrader</w>
       <w>testresources</w>
       <w>vinz</w>
+      <w>zaxxer</w>
     </words>
   </dictionary>
 </component>
