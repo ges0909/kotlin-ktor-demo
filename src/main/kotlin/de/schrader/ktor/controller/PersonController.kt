@@ -19,6 +19,12 @@ fun Route.persons() {
         get {
             val person = personService.get()
             call.respond(HttpStatusCode.OK, person)
+//            when (val result = personService.get()) {
+//                is Success -> {
+//                    call.respond(HttpStatusCode.OK, result.value)
+//                }
+//                is Failure -> call.respond(HttpStatusCode.InternalServerError)
+//            }
         }
 
         get("/{id}") {
@@ -29,8 +35,8 @@ fun Route.persons() {
 
         post {
             val person = call.receive<Person>()
-            val person_ = personService.create(person)
-            call.respond(HttpStatusCode.Created, person_)
+            val person2 = personService.create(person)
+            call.respond(HttpStatusCode.Created, person2)
         }
 
         put("/{id}") {
