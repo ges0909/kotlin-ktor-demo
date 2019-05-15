@@ -2,8 +2,8 @@ package de.schrader.ktor
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import de.schrader.ktor.repository.PersonRepository
 import de.schrader.ktor.controller.persons
+import de.schrader.ktor.repository.PersonRepository
 import de.schrader.ktor.service.PersonService
 import de.schrader.ktor.service.PersonServiceImpl
 import io.ktor.application.Application

@@ -16,8 +16,8 @@ class PersonRepository {
         DatabaseTable.selectAll().map { it.toPerson() }
     }
 
-    fun getById(id: Int): Person? = transaction {
-        DatabaseTable.select { DatabaseTable.id eq id }.firstOrNull()?.toPerson()
+    fun getById(id: Int): Person = transaction {
+        DatabaseTable.select { DatabaseTable.id eq id }.first().toPerson()
     }
 
     fun create(person: Person): Int = transaction {

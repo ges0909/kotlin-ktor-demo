@@ -29,7 +29,7 @@ class ApplicationTest {
     @AfterTest fun tearDown() {
     }
 
-    @Test fun when_get_person_then_person_is_returned() = withTestApplication(Application::module) {
+    @Test fun when_get_person_then_person_is_returned() = withTestApplication(Application::main) {
 
         with(handleRequest(HttpMethod.Post, "/person") {
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())

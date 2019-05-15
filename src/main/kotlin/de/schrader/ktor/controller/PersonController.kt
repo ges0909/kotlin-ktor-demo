@@ -19,12 +19,6 @@ fun Route.persons() {
         get {
             val person = personService.get()
             call.respond(HttpStatusCode.OK, person)
-//            when (val result = personService.get()) {
-//                is Success -> {
-//                    call.respond(HttpStatusCode.OK, result.value)
-//                }
-//                is Failure -> call.respond(HttpStatusCode.InternalServerError)
-//            }
         }
 
         get("/{id}") {
