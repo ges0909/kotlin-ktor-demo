@@ -17,13 +17,13 @@ fun Route.persons() {
     route("/persons") {
 
         get {
-            val person = personService.get()
+            val person = personService.all()
             call.respond(HttpStatusCode.OK, person)
         }
 
         get("/{id}") {
             val id = call.parameters["id"]!!.toInt()
-            val person = personService.getById(id)
+            val person = personService.get(id)
             call.respond(HttpStatusCode.OK, person)
         }
 

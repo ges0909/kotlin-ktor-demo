@@ -1,5 +1,6 @@
 package de.schrader.ktor
 
+
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import de.schrader.ktor.controller.persons
@@ -60,7 +61,7 @@ private val appModule = module {
 private fun hikari(): HikariDataSource {
     val config = HikariConfig()
     config.driverClassName = "org.h2.Driver"
-    config.jdbcUrl = "jdbc:h2:~/test"
+    config.jdbcUrl = "jdbc:h2:~/test;DATABASE_TO_UPPER=false"
     config.maximumPoolSize = 3
     config.isAutoCommit = false
     config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"

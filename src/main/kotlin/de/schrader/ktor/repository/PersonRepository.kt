@@ -12,11 +12,11 @@ class PersonRepository {
         val age = integer("age")
     }
 
-    fun get(): List<Person> = transaction {
+    fun all(): List<Person> = transaction {
         DatabaseTable.selectAll().map { it.toPerson() }
     }
 
-    fun getById(id: Int): Person = transaction {
+    fun get(id: Int): Person = transaction {
         DatabaseTable.select { DatabaseTable.id eq id }.first().toPerson()
     }
 
