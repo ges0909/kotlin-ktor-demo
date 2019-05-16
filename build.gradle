@@ -2,11 +2,9 @@ buildscript {
     ext.kotlin_version = '1.3.31'
     ext.kotlin_coroutines_version = '1.2.1'
 
-    ext.ktor_version = '1.1.5'
-    ext.ktor_gson_version = '1.1.4'
-    ext.ktor_koin_version = '2.0.0-GA'
-    ext.ktor_locations_version = '1.2.0-rc2'
+    ext.ktor_version = '1.2.0'
 
+    ext.ktor_koin_version = '2.0.0-GA'
     ext.logback_version = '1.3.0-alpha4'
 
     ext.exposed_version = '0.13.6'
@@ -43,10 +41,10 @@ dependencies {
     compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: "$kotlin_coroutines_version"
 
     compile group: 'io.ktor', name: 'ktor-server-netty', version: "$ktor_version"
-    compile group: 'io.ktor', name: 'ktor-gson', version: "$ktor_gson_version"
-    compile group: 'org.koin', name: 'koin-ktor', version: "$ktor_koin_version"
-    // compile group: 'io.ktor', name: 'ktor-locations', version: "$ktor_locations_version"
+    compile group: 'io.ktor', name: 'ktor-locations', version: "$ktor_version"
+    compile group: 'io.ktor', name: 'ktor-gson', version: "$ktor_version"
 
+    compile group: 'org.koin', name: 'koin-ktor', version: "$ktor_koin_version"
     compile group: 'ch.qos.logback', name: 'logback-classic', version: "$logback_version"
 
     compile group: 'org.jetbrains.exposed', name: 'exposed', version: "$exposed_version"
