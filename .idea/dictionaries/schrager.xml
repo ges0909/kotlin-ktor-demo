@@ -1,6 +1,7 @@
 <component name="ProjectDictionaryState">
   <dictionary name="schrager">
     <words>
+      <w>coroutines</w>
       <w>gradlew</w>
       <w>gson</w>
       <w>heike</w>
@@ -8,10 +9,12 @@
       <w>jdbc</w>
       <w>johnrengelman</w>
       <w>koin</w>
+      <w>kotlinx</w>
       <w>ktor</w>
       <w>schrader</w>
       <w>testresources</w>
       <w>vinz</w>
+      <w>yyyy</w>
       <w>zaxxer</w>
     </words>
   </dictionary>
