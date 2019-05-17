@@ -14,6 +14,7 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.features.StatusPages
 import io.ktor.gson.gson
+import io.ktor.locations.Locations
 import io.ktor.request.path
 import io.ktor.routing.routing
 import org.jetbrains.exposed.sql.Database
@@ -41,7 +42,7 @@ fun Application.main() {
         // if filter returns true, the call is logged; if no filters are defined, everything is logged
         filter { call -> call.request.path().startsWith("/person") }
     }
-    // install(Locations)
+    install(Locations)
 
     Database.connect(hikari())
     transaction {

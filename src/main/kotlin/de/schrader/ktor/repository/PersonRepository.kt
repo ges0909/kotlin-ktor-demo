@@ -1,6 +1,9 @@
 package de.schrader.ktor.repository
 
-import de.schrader.ktor.controller.Person
+import de.schrader.ktor.None
+import de.schrader.ktor.Person
+import de.schrader.ktor.Some
+import de.schrader.ktor.Thing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.*
@@ -20,18 +23,22 @@ class PersonRepository {
         }
     }
 
-    suspend fun get(id: Int): Person = withContext(Dispatchers.IO) {
-        transaction {
-            DatabaseTable.select { DatabaseTable.id eq id }.first().toPerson()
-        }
-    }
-
     suspend fun create(person: Person): Int = withContext(Dispatchers.IO) {
         transaction {
             DatabaseTable.insert {
                 it[name] = person.name
                 it[age] = person.age
             } get DatabaseTable.id
+        }
+    }
+
+    suspend fun read(id: Int): Thing<Person> = withContext(Dispatchers.IO) {
+        transaction {
+            val rows = DatabaseTable.select { DatabaseTable.id eq id }
+            when {
+                rows.empty() -> None<Person>()
+                else -> Some(rows.first().toPerson())
+            }
         }
     }
 
@@ -45,14 +52,14 @@ class PersonRepository {
         }
     }
 
-    suspend fun delete(id: Int) = withContext(Dispatchers.IO) {
+    suspend fun delete(id: Int): Int = withContext(Dispatchers.IO) {
         transaction {
             DatabaseTable.deleteWhere { DatabaseTable.id eq id }
-            Unit
         }
     }
 
     private fun ResultRow.toPerson() = Person(
+        id = this[DatabaseTable.id],
         name = this[DatabaseTable.name],
         age = this[DatabaseTable.age]
     )
