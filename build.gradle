@@ -48,6 +48,7 @@ dependencies {
     compile group: 'io.ktor', name: 'ktor-server-netty', version: "$ktor_version"
     compile group: 'io.ktor', name: 'ktor-locations', version: "$ktor_version"
     compile group: 'io.ktor', name: 'ktor-gson', version: "$ktor_version"
+    // compile group: 'io.ktor', name: 'ktor-jackson', version: "$ktor_version"
 
     compile group: 'org.koin', name: 'koin-ktor', version: "$ktor_koin_version"
     compile group: 'ch.qos.logback', name: 'logback-classic', version: "$logback_version"

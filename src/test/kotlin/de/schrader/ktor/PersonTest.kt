@@ -18,7 +18,10 @@ import kotlin.test.assertEquals
 
 class PersonTest {
 
-    class TestPerson(val id: Int? = null, val name: String, val age: Int)
+    // @JsonInclude(JsonInclude.Include.NON_NULL)
+    data class TestPerson(val id: Int? = null, val name: String, val age: Int)
+
+    // private val mapper = jacksonObjectMapper()
 
 //    @BeforeTest fun setUp() {
 //    }
@@ -34,9 +37,11 @@ class PersonTest {
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             // setBody(mapOf("name" to "Vinz", "age" to 20).toString())
             setBody(Gson().toJson(TestPerson(name = "Vinzenz", age = 20)))
+            // setBody(mapper.writeValueAsString(TestPerson(name = "Vinzenz", age = 20)))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
-            val person = Gson().fromJson(response.content, TestPerson::class.java)
+            val person = Gson().fromJson(response.content.toString(), TestPerson::class.java)
+            // val person = mapper.readValue<TestPerson>(response.content.toString())
             assertEquals("Vinzenz", person.name)
             assertEquals(20, person.age)
             person.id
@@ -45,7 +50,8 @@ class PersonTest {
         with(handleRequest(HttpMethod.Get, "/persons/$id") {
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            val person = Gson().fromJson(response.content, TestPerson::class.java)
+            val person = Gson().fromJson(response.content.toString(), TestPerson::class.java)
+            // val person = mapper.readValue<TestPerson>(response.content.toString())
             assertEquals("Vinzenz", person.name)
             assertEquals(20, person.age)
         }

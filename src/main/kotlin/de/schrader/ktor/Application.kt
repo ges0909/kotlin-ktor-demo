@@ -34,6 +34,9 @@ fun Application.main() {
         gson {
             setPrettyPrinting()
         }
+//        jackson {
+//            configure(SerializationFeature.INDENT_OUTPUT, true)
+//        }
     }
     install(Koin) {
         modules(appModule)
