@@ -1,8 +1,8 @@
 package de.schrader.ktor.controller
 
 import de.schrader.ktor.None
-import de.schrader.ktor.Person
 import de.schrader.ktor.Some
+import de.schrader.ktor.repository.Person
 import de.schrader.ktor.service.PersonService
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -18,8 +18,10 @@ fun Route.persons() {
     route("/persons") {
 
         get {
-            val person = personService.all()
-            call.respond(HttpStatusCode.OK, person)
+            when (val thing = personService.all()) {
+                is Some -> call.respond(HttpStatusCode.OK, thing.value)
+                is None -> call.respond(HttpStatusCode.InternalServerError)
+            }
         }
 
         get("/{id}") {

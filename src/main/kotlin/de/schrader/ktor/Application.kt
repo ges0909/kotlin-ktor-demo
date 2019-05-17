@@ -1,6 +1,5 @@
 package de.schrader.ktor
 
-
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import de.schrader.ktor.controller.persons
@@ -14,6 +13,7 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.features.StatusPages
 import io.ktor.gson.gson
+import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Locations
 import io.ktor.request.path
 import io.ktor.routing.routing
@@ -24,6 +24,7 @@ import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.slf4j.event.Level
 
+@KtorExperimentalLocationsAPI
 fun Application.main() {
     // log.info("Install features")
 
@@ -46,7 +47,7 @@ fun Application.main() {
 
     Database.connect(hikari())
     transaction {
-        SchemaUtils.create(PersonRepository.DatabaseTable)
+        SchemaUtils.create(PersonRepository.PersonTable)
     }
 
     routing {
