@@ -31,6 +31,10 @@ group 'ktor-demo'
 version '0.0.1-SNAPSHOT'
 mainClassName = 'de.schrader.ktor.MainKt'
 
+sourceSets {
+    main.kotlin.srcDirs += [ 'src/main/kotlin' ]
+}
+
 repositories {
     jcenter()
     maven { url "https://dl.bintray.com/kotlin/ktor" }

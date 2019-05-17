@@ -1,16 +1,29 @@
 package de.schrader.ktor
 
-import io.ktor.server.engine.commandLineEnvironment
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
+import io.ktor.server.netty.EngineMain
 
-fun main(args: Array<String>) {
+/**
+ * programmatic server config
+ */
+//fun main() {
 //    embeddedServer(
 //        factory = Netty,
 //        port = 8080,
 //        module = Application::main
 //    ).start(wait = true)
-    embeddedServer(Netty,
-        commandLineEnvironment(args)
-    ).start()
-}
+//}
+
+/**
+ * config resource file: resources/application.conf
+ */
+// uses 'application.conf"
+//fun main(args: Array<String>) {
+//    embeddedServer(Netty,
+//        commandLineEnvironment(args)
+//    ).start()
+//}
+
+/**
+ * external config file
+ */
+fun main() = EngineMain.main(arrayOf("-config=dev.conf"))
