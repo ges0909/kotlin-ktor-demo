@@ -11,6 +11,7 @@ buildscript {
     ext.h2_version = '1.4.+'
     ext.hikaricp_version = '3.3.1'
 
+    ext.mockk_version = '1.9.3'
     repositories {
         jcenter()
     }
@@ -55,9 +56,8 @@ dependencies {
     compile group: 'com.h2database', name: 'h2', version: "$h2_version"
     compile group: 'com.zaxxer', name: 'HikariCP', version: "$hikaricp_version"
 
-    testCompile group: 'io.ktor', name: 'ktor-server-test-host', version: "$ktor_version"
-    testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test', version: "$kotlin_version"
-    testCompile group: 'org.jetbrains.kotlin', name: 'kotlin-test-junit', version: "$kotlin_version"
+    testCompile group: 'io.ktor', name: 'ktor-server-tests', version: "$ktor_version"
+    testCompile group: 'io.mockk', name: 'mockk', version: "$mockk_version"
 }
 
 // gradlew serve [run]
