@@ -6,6 +6,7 @@ import de.schrader.ktor.repository.Person
 import de.schrader.ktor.service.PersonService
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
+import io.ktor.locations.locations
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.*
@@ -35,7 +36,10 @@ fun Route.persons() {
         post {
             val person = call.receive<Person>()
             when (val thing = personService.create(person)) {
-                is Some -> call.respond(HttpStatusCode.Created, thing.value)
+                is Some -> {
+                    val path = locations.href(thing.value)
+                    call.respond(HttpStatusCode.Created, thing.value)
+                }
                 is None -> call.respond(HttpStatusCode.InternalServerError)
             }
         }

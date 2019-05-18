@@ -55,6 +55,13 @@ fun Application.main() {
 
     routing {
         persons()
+
+//        post<Person> { person ->
+//            when (val thing = personService.create(person)) {
+//                is Some -> call.respond(HttpStatusCode.Created, thing.value)
+//                is None -> call.respond(HttpStatusCode.InternalServerError)
+//            }
+//        }
     }
 }
 
