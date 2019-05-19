@@ -19,6 +19,8 @@ import io.ktor.request.path
 import io.ktor.routing.routing
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
@@ -50,7 +52,8 @@ fun Application.main() {
 
     Database.connect(hikari())
     transaction {
-        SchemaUtils.create(PersonRepository.PersonTable)
+        // addLogger(StdOutSqlLogger)
+        SchemaUtils.create(PersonRepository.Schema)
     }
 
     routing {

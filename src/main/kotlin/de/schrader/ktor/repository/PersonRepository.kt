@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class PersonRepository {
 
-    object PersonTable : Table("PERSON") {
+    object Schema : Table("PERSON") {
         val id = integer("id").autoIncrement().primaryKey()
         val name = varchar("name", 32)
         val age = integer("age")
@@ -18,7 +18,7 @@ class PersonRepository {
 
     suspend fun all(): Thing<List<Person>> = withContext(Dispatchers.IO) {
         transaction {
-            val query = PersonTable.selectAll()
+            val query = Schema.selectAll()
             when {
                 query.none() -> Some(emptyList())
                 else -> Some(query.map { it.toPerson() })
@@ -28,16 +28,16 @@ class PersonRepository {
 
     suspend fun create(person: Person): Int = withContext(Dispatchers.IO) {
         transaction {
-            PersonTable.insert {
+            Schema.insert {
                 it[name] = person.name
                 it[age] = person.age
-            } get PersonTable.id
+            } get Schema.id
         }
     }
 
     suspend fun read(id: Int): Thing<Person> = withContext(Dispatchers.IO) {
         transaction {
-            val query = PersonTable.select { PersonTable.id eq id }
+            val query = Schema.select { Schema.id eq id }
             when {
                 query.none() -> None<Person>()
                 else -> Some(query.first().toPerson())
@@ -45,25 +45,24 @@ class PersonRepository {
         }
     }
 
-    suspend fun update(id: Int, person: Person) = withContext(Dispatchers.IO) {
+    suspend fun update(id: Int, person: Person): Int = withContext(Dispatchers.IO) {
         transaction {
-            PersonTable.update({ PersonTable.id eq id }) {
+            Schema.update({ Schema.id eq id }) {
                 it[name] = person.name
                 it[age] = person.age
             }
-            Unit
         }
     }
 
     suspend fun delete(id: Int): Int = withContext(Dispatchers.IO) {
         transaction {
-            PersonTable.deleteWhere { PersonTable.id eq id }
+            Schema.deleteWhere { Schema.id eq id }
         }
     }
 
     private fun ResultRow.toPerson() = Person(
-        id = this[PersonTable.id],
-        name = this[PersonTable.name],
-        age = this[PersonTable.age]
+        id = this[Schema.id],
+        name = this[Schema.name],
+        age = this[Schema.age]
     )
 }

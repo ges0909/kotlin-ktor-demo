@@ -47,8 +47,11 @@ fun Route.persons() {
         put("/{id}") {
             val id = call.parameters["id"]!!.toInt()
             val person = call.receive<Person>()
-            personService.update(id, person)
-            call.respond(HttpStatusCode.OK)
+            when (personService.update(id, person)) {
+                0 -> call.respond(HttpStatusCode.NotFound)
+                1 -> call.respond(HttpStatusCode.OK)
+                else -> call.respond(HttpStatusCode.InternalServerError)
+            }
         }
 
         delete("/{id}") {
