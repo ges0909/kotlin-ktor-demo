@@ -33,6 +33,7 @@ class PersonTest {
     @KtorExperimentalLocationsAPI
     @Test fun `when a person is created then it is returned`() = withTestApplication(Application::main) {
 
+        // create
         val id = with(handleRequest(HttpMethod.Post, "/persons") {
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             // setBody(mapOf("name" to "Vinz", "age" to 20).toString())
@@ -40,20 +41,41 @@ class PersonTest {
             // setBody(mapper.writeValueAsString(TestPerson(name = "Vinzenz", age = 20)))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
-            val person = Gson().fromJson(response.content.toString(), TestPerson::class.java)
-            // val person = mapper.readValue<TestPerson>(response.content.toString())
-            assertEquals("Vinzenz", person.name)
-            assertEquals(20, person.age)
-            person.id
+            Gson().fromJson(response.content.toString(), TestPerson::class.java).id
         }
 
-        with(handleRequest(HttpMethod.Get, "/persons/$id") {
+        // read
+        var person = with(handleRequest(HttpMethod.Get, "/persons/$id") {
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            val person = Gson().fromJson(response.content.toString(), TestPerson::class.java)
-            // val person = mapper.readValue<TestPerson>(response.content.toString())
-            assertEquals("Vinzenz", person.name)
-            assertEquals(20, person.age)
+            Gson().fromJson(response.content.toString(), TestPerson::class.java)
+            // mapper.readValue<TestPerson>(response.content.toString()).id
+        }
+        assertEquals("Vinzenz", person.name)
+        assertEquals(20, person.age)
+
+        // update
+        with(handleRequest(HttpMethod.Put, "/persons/$id") {
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Gson().toJson(TestPerson(name = "Freddy", age = 30)))
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+        }
+
+        // read
+        person = with(handleRequest(HttpMethod.Get, "/persons/$id") {
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+            Gson().fromJson(response.content.toString(), TestPerson::class.java)
+            // mapper.readValue<TestPerson>(response.content.toString()).id
+        }
+        assertEquals("Freddy", person.name)
+        assertEquals(30, person.age)
+
+        // delete
+        with(handleRequest(HttpMethod.Delete, "/persons/$id") {
+        }) {
+            assertEquals(HttpStatusCode.NoContent, response.status())
         }
     }
 }

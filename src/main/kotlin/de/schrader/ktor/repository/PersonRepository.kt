@@ -1,8 +1,6 @@
 package de.schrader.ktor.repository
 
-import de.schrader.ktor.None
-import de.schrader.ktor.Some
-import de.schrader.ktor.Thing
+import arrow.core.Option
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.*
@@ -16,12 +14,12 @@ class PersonRepository {
         val age = integer("age")
     }
 
-    suspend fun all(): Thing<List<Person>> = withContext(Dispatchers.IO) {
+    suspend fun all(): Option<List<Person>> = withContext(Dispatchers.IO) {
         transaction {
             val query = Schema.selectAll()
             when {
-                query.none() -> Some(emptyList())
-                else -> Some(query.map { it.toPerson() })
+                query.none() -> Option.empty()
+                else -> Option.just(query.map { it.toPerson() })
             }
         }
     }
@@ -35,12 +33,12 @@ class PersonRepository {
         }
     }
 
-    suspend fun read(id: Int): Thing<Person> = withContext(Dispatchers.IO) {
+    suspend fun read(id: Int): Option<Person> = withContext(Dispatchers.IO) {
         transaction {
             val query = Schema.select { Schema.id eq id }
             when {
-                query.none() -> None<Person>()
-                else -> Some(query.first().toPerson())
+                query.none() -> Option.empty()
+                else -> Option.just(query.first().toPerson())
             }
         }
     }

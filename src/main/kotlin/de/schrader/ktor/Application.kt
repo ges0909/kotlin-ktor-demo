@@ -19,8 +19,6 @@ import io.ktor.request.path
 import io.ktor.routing.routing
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
@@ -47,6 +45,9 @@ fun Application.main() {
         level = Level.INFO
         // if filter returns true, the call is logged; if no filters are defined, everything is logged
         filter { call -> call.request.path().startsWith("/person") }
+//        format {
+//            "${it.request.httpMethod.value} ${it.request.path()}} => ${it.response.status()}"
+//        }
     }
     install(Locations)
 
@@ -58,7 +59,6 @@ fun Application.main() {
 
     routing {
         persons()
-
 //        post<Person> { person ->
 //            when (val thing = personService.create(person)) {
 //                is Some -> call.respond(HttpStatusCode.Created, thing.value)
