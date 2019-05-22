@@ -41,6 +41,7 @@ sourceSets {
 repositories {
     jcenter()
     maven { url "https://dl.bintray.com/kotlin/ktor" }
+    maven { url "https://dl.bintray.com/arrow-kt/arrow-kt/" }
 }
 
 dependencies {
