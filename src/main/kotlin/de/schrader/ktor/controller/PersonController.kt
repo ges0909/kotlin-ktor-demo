@@ -1,8 +1,8 @@
 package de.schrader.ktor.controller
 
+import arrow.core.None
+import arrow.core.Some
 import arrow.core.getOrElse
-import de.schrader.ktor.None
-import de.schrader.ktor.Some
 import de.schrader.ktor.repository.Person
 import de.schrader.ktor.service.PersonService
 import io.ktor.application.call
@@ -10,7 +10,12 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.request.receive
 import io.ktor.response.respond
-import io.ktor.routing.*
+import io.ktor.routing.Route
+import io.ktor.routing.delete
+import io.ktor.routing.get
+import io.ktor.routing.post
+import io.ktor.routing.put
+import io.ktor.routing.route
 import org.koin.ktor.ext.inject
 
 @KtorExperimentalLocationsAPI
@@ -21,25 +26,26 @@ fun Route.persons() {
     route("/persons") {
 
         get {
-            call.respond(HttpStatusCode.OK, personService.all().getOrElse { "" })
+            val option = personService.all();
+            call.respond(HttpStatusCode.OK, option.getOrElse { emptyArray<List<Person>>() })
         }
 
         get("/{id}") {
             val id = call.parameters["id"]!!.toInt()
             when (val option = personService.read(id)) {
-                is Some<*> -> call.respond(HttpStatusCode.OK, option.getOrElse { "" })
-                is None<*> -> call.respond(HttpStatusCode.NotFound)
+                is Some -> call.respond(HttpStatusCode.OK, option.getOrElse { "" })
+                is None -> call.respond(HttpStatusCode.NotFound)
             }
         }
 
         post {
             val person = call.receive<Person>()
             when (val option = personService.create(person)) {
-                is Some<*> -> {
+                is Some -> {
                     // val path = locations.href(option.getOrElse { "" })
                     call.respond(HttpStatusCode.Created, option.getOrElse { "" })
                 }
-                is None<*> -> call.respond(HttpStatusCode.InternalServerError)
+                is None -> call.respond(HttpStatusCode.InternalServerError)
             }
         }
 

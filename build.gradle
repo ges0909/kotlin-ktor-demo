@@ -11,9 +11,10 @@ buildscript {
     ext.h2_version = '1.4.+'
     ext.hikaricp_version = '3.3.1'
 
-    ext.arrow_kt_version = '0.8.2'
+    ext.arrow_version = '0.9.1-SNAPSHOT'
 
     ext.mockk_version = '1.9.3'
+
     repositories {
         jcenter()
     }
@@ -40,8 +41,9 @@ sourceSets {
 
 repositories {
     jcenter()
-    maven { url "https://dl.bintray.com/kotlin/ktor" }
+    maven { url "https://dl.bintray.com/kotlin/ktor/" }
     maven { url "https://dl.bintray.com/arrow-kt/arrow-kt/" }
+    maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local/" }
 }
 
 dependencies {
@@ -61,7 +63,7 @@ dependencies {
     compile group: 'com.h2database', name: 'h2', version: "$h2_version"
     compile group: 'com.zaxxer', name: 'HikariCP', version: "$hikaricp_version"
 
-    compile group: 'io.arrow-kt', name: 'arrow-data', version: "$arrow_kt_version"
+    compile group: 'io.arrow-kt', name: 'arrow-core-data', version: "$arrow_version"
 
     testCompile group: 'io.ktor', name: 'ktor-server-tests', version: "$ktor_version"
     testCompile group: 'io.mockk', name: 'mockk', version: "$mockk_version"

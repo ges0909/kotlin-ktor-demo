@@ -3,14 +3,22 @@ package de.schrader.ktor.repository
 import arrow.core.Option
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
+
+private const val MAX_NAME_LENGTH: Int = 32
 
 class PersonRepository {
 
     object Schema : Table("PERSON") {
         val id = integer("id").autoIncrement().primaryKey()
-        val name = varchar("name", 32)
+        val name = varchar("name", MAX_NAME_LENGTH)
         val age = integer("age")
     }
 
