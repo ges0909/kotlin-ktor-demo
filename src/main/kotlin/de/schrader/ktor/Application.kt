@@ -1,5 +1,6 @@
 package de.schrader.ktor
 
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import de.schrader.ktor.controller.persons
@@ -12,7 +13,7 @@ import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.features.StatusPages
-import io.ktor.gson.gson
+import io.ktor.jackson.jackson
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Locations
 import io.ktor.request.path
@@ -31,12 +32,12 @@ fun Application.main() {
     install(StatusPages)
     install(DefaultHeaders)
     install(ContentNegotiation) {
-        gson {
-            setPrettyPrinting()
-        }
-//        jackson {
-//            configure(SerializationFeature.INDENT_OUTPUT, true)
+        //        gson {
+//            setPrettyPrinting()
 //        }
+        jackson {
+            configure(SerializationFeature.INDENT_OUTPUT, true)
+        }
     }
     install(Koin) {
         modules(appModule)

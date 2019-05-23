@@ -3,7 +3,9 @@
  */
 package de.schrader.ktor
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.application.Application
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -18,10 +20,10 @@ import kotlin.test.assertEquals
 
 class PersonTest {
 
-    // @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     data class TestPerson(val id: Int? = null, val name: String, val age: Int)
 
-    // private val mapper = jacksonObjectMapper()
+    private val mapper = jacksonObjectMapper()
 
 //    @BeforeTest fun setUp() {
 //    }
@@ -37,19 +39,20 @@ class PersonTest {
         val id = with(handleRequest(HttpMethod.Post, "/persons") {
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             // setBody(mapOf("name" to "Vinz", "age" to 20).toString())
-            setBody(Gson().toJson(TestPerson(name = "Vinzenz", age = 20)))
-            // setBody(mapper.writeValueAsString(TestPerson(name = "Vinzenz", age = 20)))
+            // setBody(Gson().toJson(TestPerson(name = "Vinzenz", age = 20)))
+            setBody(mapper.writeValueAsString(TestPerson(name = "Vinzenz", age = 20)))
         }) {
             assertEquals(HttpStatusCode.Created, response.status())
-            Gson().fromJson(response.content.toString(), TestPerson::class.java).id
+            // Gson().fromJson(response.content.toString(), TestPerson::class.java).id
+            mapper.readValue<TestPerson>(response.content.toString()).id
         }
 
         // read
         var person = with(handleRequest(HttpMethod.Get, "/persons/$id") {
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            Gson().fromJson(response.content.toString(), TestPerson::class.java)
-            // mapper.readValue<TestPerson>(response.content.toString()).id
+            // Gson().fromJson(response.content.toString(), TestPerson::class.java)
+            mapper.readValue<TestPerson>(response.content.toString())
         }
         assertEquals("Vinzenz", person.name)
         assertEquals(20, person.age)
@@ -57,7 +60,9 @@ class PersonTest {
         // update
         with(handleRequest(HttpMethod.Put, "/persons/$id") {
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Gson().toJson(TestPerson(name = "Freddy", age = 30)))
+            // setBody(Gson().toJson(TestPerson(name = "Freddy", age = 30)))
+            setBody(mapper.writeValueAsString(TestPerson(name = "Freddy", age = 30)))
+
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
         }
@@ -66,8 +71,8 @@ class PersonTest {
         person = with(handleRequest(HttpMethod.Get, "/persons/$id") {
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
-            Gson().fromJson(response.content.toString(), TestPerson::class.java)
-            // mapper.readValue<TestPerson>(response.content.toString()).id
+            // Gson().fromJson(response.content.toString(), TestPerson::class.java)
+            mapper.readValue<TestPerson>(response.content.toString())
         }
         assertEquals("Freddy", person.name)
         assertEquals(30, person.age)
