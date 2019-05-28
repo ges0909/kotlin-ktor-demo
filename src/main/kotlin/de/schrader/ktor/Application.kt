@@ -1,5 +1,6 @@
 package de.schrader.ktor
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -36,6 +37,7 @@ fun Application.main() {
 //            setPrettyPrinting()
 //        }
         jackson {
+            setSerializationInclusion(JsonInclude.Include.NON_NULL)
             configure(SerializationFeature.INDENT_OUTPUT, true)
         }
     }
@@ -77,7 +79,8 @@ private val appModule = module {
 private fun hikari(): HikariDataSource {
     val config = HikariConfig()
     config.driverClassName = "org.h2.Driver"
-    config.jdbcUrl = "jdbc:h2:~/test;DATABASE_TO_UPPER=false"
+    // config.jdbcUrl = "jdbc:h2:~/test;DATABASE_TO_UPPER=false"
+    config.jdbcUrl = "jdbc:h2:mem:test;DATABASE_TO_UPPER=false"
     config.maximumPoolSize = 3
     config.isAutoCommit = false
     config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"

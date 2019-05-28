@@ -4,6 +4,7 @@ import arrow.core.Option
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -14,17 +15,21 @@ import org.jetbrains.exposed.sql.update
 
 private const val MAX_NAME_LENGTH: Int = 32
 
-class PersonRepository {
+interface PersonRepository : CrudRepository<Person, Int>
 
-    object Schema : Table("PERSON") {
+class PersonRepositoryImpl : PersonRepository {
+
+    private object Persons : Table("PERSON") {
         val id = integer("id").autoIncrement().primaryKey()
         val name = varchar("name", MAX_NAME_LENGTH)
         val age = integer("age")
     }
 
-    suspend fun all(): Option<List<Person>> = withContext(Dispatchers.IO) {
+    override fun createTable() = SchemaUtils.create(Persons)
+
+    override suspend fun findAll(): Option<List<Person>> = withContext(Dispatchers.IO) {
         transaction {
-            val query = Schema.selectAll()
+            val query = Persons.selectAll()
             when {
                 query.none() -> Option.empty()
                 else -> Option.just(query.map { it.toPerson() })
@@ -32,18 +37,9 @@ class PersonRepository {
         }
     }
 
-    suspend fun create(person: Person): Int = withContext(Dispatchers.IO) {
+    override suspend fun find(id: Int): Option<Person> = withContext(Dispatchers.IO) {
         transaction {
-            Schema.insert {
-                it[name] = person.name
-                it[age] = person.age
-            } get Schema.id
-        }
-    }
-
-    suspend fun read(id: Int): Option<Person> = withContext(Dispatchers.IO) {
-        transaction {
-            val query = Schema.select { Schema.id eq id }
+            val query = Persons.select { Persons.id eq id }
             when {
                 query.none() -> Option.empty()
                 else -> Option.just(query.first().toPerson())
@@ -51,24 +47,33 @@ class PersonRepository {
         }
     }
 
-    suspend fun update(id: Int, person: Person): Int = withContext(Dispatchers.IO) {
+    override suspend fun create(entity: Person): Int = withContext(Dispatchers.IO) {
         transaction {
-            Schema.update({ Schema.id eq id }) {
-                it[name] = person.name
-                it[age] = person.age
+            Persons.insert {
+                it[name] = entity.name
+                it[age] = entity.age
+            } get Persons.id
+        }
+    }
+
+    override suspend fun update(id: Int, entity: Person): Int = withContext(Dispatchers.IO) {
+        transaction {
+            Persons.update({ Persons.id eq id }) {
+                it[name] = entity.name
+                it[age] = entity.age
             }
         }
     }
 
-    suspend fun delete(id: Int): Int = withContext(Dispatchers.IO) {
+    override suspend fun delete(id: Int): Int = withContext(Dispatchers.IO) {
         transaction {
-            Schema.deleteWhere { Schema.id eq id }
+            Persons.deleteWhere { Persons.id eq id }
         }
     }
 
     private fun ResultRow.toPerson() = Person(
-        id = this[Schema.id],
-        name = this[Schema.name],
-        age = this[Schema.age]
+        id = this[Persons.id],
+        name = this[Persons.name],
+        age = this[Persons.age]
     )
 }

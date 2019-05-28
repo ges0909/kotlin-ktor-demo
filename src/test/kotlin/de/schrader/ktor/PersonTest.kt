@@ -72,7 +72,7 @@ class PersonTest {
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             // Gson().fromJson(response.content.toString(), TestPerson::class.java)
-            mapper.readValue<TestPerson>(response.content.toString())
+            mapper.readValue(response.content.toString())
         }
         assertEquals("Freddy", person.name)
         assertEquals(30, person.age)
