@@ -6,6 +6,7 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import de.schrader.ktor.controller.persons
 import de.schrader.ktor.repository.PersonRepository
+import de.schrader.ktor.repository.PersonRepositoryImpl
 import de.schrader.ktor.service.PersonService
 import de.schrader.ktor.service.PersonServiceImpl
 import io.ktor.application.Application
@@ -24,6 +25,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
+import org.koin.ktor.ext.inject
 import org.slf4j.event.Level
 
 @KtorExperimentalLocationsAPI
@@ -55,10 +57,11 @@ fun Application.main() {
     install(Locations)
 
     Database.connect(hikari())
-    transaction {
-        // addLogger(StdOutSqlLogger)
-        SchemaUtils.create(PersonRepository.Schema)
-    }
+//    transaction {
+//        addLogger(StdOutSqlLogger)
+//    }
+    val personRepository: PersonRepository by inject()
+    personRepository.createTable()
 
     routing {
         persons()
@@ -73,7 +76,7 @@ fun Application.main() {
 
 private val appModule = module {
     single<PersonService> { PersonServiceImpl(get()) } // get() resolves PersonRepository
-    single { PersonRepository() }
+    single<PersonRepository> { PersonRepositoryImpl() }
 }
 
 private fun hikari(): HikariDataSource {

@@ -10,12 +10,13 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
-private const val MAX_NAME_LENGTH: Int = 32
-
 interface PersonRepository : CrudRepository<Person, Int>
+
+private const val MAX_NAME_LENGTH = 32
 
 class PersonRepositoryImpl : PersonRepository {
 
@@ -25,7 +26,9 @@ class PersonRepositoryImpl : PersonRepository {
         val age = integer("age")
     }
 
-    override fun createTable() = SchemaUtils.create(Persons)
+    override fun createTable() = transaction {
+        SchemaUtils.create(Persons)
+    }
 
     override suspend fun findAll(): Option<List<Person>> = withContext(Dispatchers.IO) {
         transaction {
@@ -49,16 +52,13 @@ class PersonRepositoryImpl : PersonRepository {
 
     override suspend fun create(entity: Person): Int = withContext(Dispatchers.IO) {
         transaction {
-            Persons.insert {
-                it[name] = entity.name
-                it[age] = entity.age
-            } get Persons.id
+            Persons.insert(entity.toRow()) get Persons.id
         }
     }
 
     override suspend fun update(id: Int, entity: Person): Int = withContext(Dispatchers.IO) {
         transaction {
-            Persons.update({ Persons.id eq id }) {
+            Persons.update(where = { Persons.id eq id }) {
                 it[name] = entity.name
                 it[age] = entity.age
             }
@@ -76,4 +76,9 @@ class PersonRepositoryImpl : PersonRepository {
         name = this[Persons.name],
         age = this[Persons.age]
     )
+
+    private fun Person.toRow(): Persons.(UpdateBuilder<*>) -> Unit = {
+        it[name] = this@toRow.name
+        it[age] = this@toRow.age
+    }
 }

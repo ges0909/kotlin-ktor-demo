@@ -2,11 +2,11 @@ package de.schrader.ktor.repository
 
 import arrow.core.Option
 
-interface CrudRepository<T, I> {
+interface CrudRepository<E, I> {
     fun createTable()
-    suspend fun findAll(): Option<List<T>>
-    suspend fun find(id: I): Option<T>
-    suspend fun create(entity: T): I
-    suspend fun update(id: I, entity: T): I
+    suspend fun findAll(): Option<List<E>>
+    suspend fun find(id: I): Option<E>
+    suspend fun create(entity: E): I
+    suspend fun update(id: I, entity: E): I
     suspend fun delete(id: I): I
 }

@@ -26,13 +26,13 @@ fun Route.persons() {
     route("/persons") {
 
         get {
-            val option = personService.all()
+            val option = personService.findAll()
             call.respond(HttpStatusCode.OK, option.getOrElse { emptyArray<List<Person>>() })
         }
 
         get("/{id}") {
             val id = call.parameters["id"]!!.toInt()
-            when (val option = personService.read(id)) {
+            when (val option = personService.find(id)) {
                 is Some -> call.respond(HttpStatusCode.OK, option.getOrElse { "" })
                 is None -> call.respond(HttpStatusCode.NotFound)
             }
