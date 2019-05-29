@@ -70,8 +70,6 @@ fun Application.main() {
 //            }
 //        }
     }
-
-    personRepository.dropTable()
 }
 
 private val appModule = module {
