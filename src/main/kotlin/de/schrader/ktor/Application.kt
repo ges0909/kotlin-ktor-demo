@@ -21,8 +21,6 @@ import io.ktor.locations.Locations
 import io.ktor.request.path
 import io.ktor.routing.routing
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
@@ -56,7 +54,7 @@ fun Application.main() {
     }
     install(Locations)
 
-    Database.connect(hikari())
+    val db = Database.connect(hikari())
 //    transaction {
 //        addLogger(StdOutSqlLogger)
 //    }
@@ -72,6 +70,8 @@ fun Application.main() {
 //            }
 //        }
     }
+
+    personRepository.dropTable()
 }
 
 private val appModule = module {

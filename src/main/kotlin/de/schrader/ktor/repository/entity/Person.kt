@@ -1,4 +1,4 @@
-package de.schrader.ktor.repository
+package de.schrader.ktor.repository.entity
 
 // import io.ktor.locations.Location
 

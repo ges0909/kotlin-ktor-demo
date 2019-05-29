@@ -3,7 +3,7 @@ package de.schrader.ktor.controller
 import arrow.core.None
 import arrow.core.Some
 import arrow.core.getOrElse
-import de.schrader.ktor.repository.Person
+import de.schrader.ktor.repository.entity.Person
 import de.schrader.ktor.service.PersonService
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode

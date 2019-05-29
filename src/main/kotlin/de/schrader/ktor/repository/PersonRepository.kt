@@ -1,6 +1,7 @@
 package de.schrader.ktor.repository
 
 import arrow.core.Option
+import de.schrader.ktor.repository.entity.Person
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.ResultRow
@@ -28,6 +29,10 @@ class PersonRepositoryImpl : PersonRepository {
 
     override fun createTable() = transaction {
         SchemaUtils.create(Persons)
+    }
+
+    override fun dropTable() = transaction {
+        SchemaUtils.drop(Persons)
     }
 
     override suspend fun findAll(): Option<List<Person>> = withContext(Dispatchers.IO) {
