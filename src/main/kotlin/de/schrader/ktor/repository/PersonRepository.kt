@@ -21,7 +21,7 @@ private const val MAX_NAME_LENGTH = 32
 
 class PersonRepositoryImpl : PersonRepository {
 
-    private object Persons : Table("PERSON") {
+    private object Persons : Table("PERSONS") {
         val id = integer("id").autoIncrement().primaryKey()
         val name = varchar("name", MAX_NAME_LENGTH)
         val age = integer("age")

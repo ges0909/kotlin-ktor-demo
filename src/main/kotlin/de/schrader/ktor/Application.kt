@@ -28,7 +28,8 @@ import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
 import org.slf4j.event.Level
 
-const val API_VERSION = "/api/v1"
+const val API_PATH = "/api"
+const val API_VERSION = "v1"
 
 @KtorExperimentalLocationsAPI
 fun Application.main() {

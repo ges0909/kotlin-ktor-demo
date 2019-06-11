@@ -18,8 +18,7 @@ import io.ktor.server.testing.withTestApplication
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-private const val API_VERSION = "/api/v1"
-private const val PERSONS = "$API_VERSION/persons"
+private const val PERSONS_PATH = "/api/v1/persons"
 
 class PersonTest {
 
@@ -39,7 +38,7 @@ class PersonTest {
     @Test fun `when a person is created then it is returned`() = withTestApplication(Application::main) {
 
         // create
-        val id = with(handleRequest(HttpMethod.Post, PERSONS) {
+        val id = with(handleRequest(HttpMethod.Post, PERSONS_PATH) {
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             // setBody(mapOf("name" to "Vinz", "age" to 20).toString())
             // setBody(Gson().toJson(TestPerson(name = "Vinzenz", age = 20)))
@@ -51,7 +50,7 @@ class PersonTest {
         }
 
         // read
-        var person = with(handleRequest(HttpMethod.Get, "$PERSONS/$id") {
+        var person = with(handleRequest(HttpMethod.Get, "$PERSONS_PATH/$id") {
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             // Gson().fromJson(response.content.toString(), TestPerson::class.java)
@@ -61,7 +60,7 @@ class PersonTest {
         assertEquals(20, person.age)
 
         // update
-        with(handleRequest(HttpMethod.Put, "$PERSONS/$id") {
+        with(handleRequest(HttpMethod.Put, "$PERSONS_PATH/$id") {
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             // setBody(Gson().toJson(TestPerson(name = "Freddy", age = 30)))
             setBody(mapper.writeValueAsString(TestPerson(name = "Freddy", age = 30)))
@@ -71,7 +70,7 @@ class PersonTest {
         }
 
         // read
-        person = with(handleRequest(HttpMethod.Get, "$PERSONS/$id") {
+        person = with(handleRequest(HttpMethod.Get, "$PERSONS_PATH/$id") {
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             // Gson().fromJson(response.content.toString(), TestPerson::class.java)
@@ -81,7 +80,7 @@ class PersonTest {
         assertEquals(30, person.age)
 
         // delete
-        with(handleRequest(HttpMethod.Delete, "$PERSONS/$id") {
+        with(handleRequest(HttpMethod.Delete, "$PERSONS_PATH/$id") {
         }) {
             assertEquals(HttpStatusCode.NoContent, response.status())
         }
