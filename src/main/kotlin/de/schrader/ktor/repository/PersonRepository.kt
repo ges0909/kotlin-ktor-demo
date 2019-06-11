@@ -1,7 +1,7 @@
 package de.schrader.ktor.repository
 
 import arrow.core.Option
-import de.schrader.ktor.repository.entity.Person
+import de.schrader.ktor.model.Person
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.ResultRow

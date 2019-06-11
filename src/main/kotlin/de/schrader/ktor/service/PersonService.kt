@@ -1,8 +1,8 @@
 package de.schrader.ktor.service
 
 import arrow.core.Option
-import de.schrader.ktor.repository.entity.Person
 import de.schrader.ktor.repository.PersonRepository
+import de.schrader.ktor.model.Person
 
 interface PersonService {
     suspend fun findAll(): Option<List<Person>>
