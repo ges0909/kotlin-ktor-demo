@@ -8,7 +8,6 @@ import de.schrader.ktor.API_VERSION
 import de.schrader.ktor.model.Person
 import de.schrader.ktor.service.PersonService
 import io.ktor.application.call
-import io.ktor.freemarker.FreeMarkerContent
 import io.ktor.http.HttpStatusCode
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.request.receive
@@ -33,10 +32,7 @@ fun Route.persons() {
         get {
             val option = personService.findAll()
             val persons = option.getOrElse { emptyArray<List<Person>>() }
-            // call.respond(HttpStatusCode.OK, persons)
-            call.respond(
-                FreeMarkerContent("persons.ftl", mapOf("persons" to persons))
-            )
+            call.respond(HttpStatusCode.OK, persons)
         }
 
         get("/{id}") {
