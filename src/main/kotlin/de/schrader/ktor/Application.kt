@@ -8,6 +8,7 @@ import de.schrader.ktor.repository.PersonRepository
 import de.schrader.ktor.repository.PersonRepositoryImpl
 import de.schrader.ktor.service.PersonService
 import de.schrader.ktor.service.PersonServiceImpl
+import freemarker.cache.ClassTemplateLoader
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -15,6 +16,7 @@ import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.features.StatusPages
+import io.ktor.freemarker.FreeMarker
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.locations.KtorExperimentalLocationsAPI
@@ -56,6 +58,10 @@ fun Application.main() {
         moshi()
     }
 
+    install(FreeMarker) {
+        templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
+    }
+
     install(Koin) {
         modules(appModule)
     }
@@ -63,7 +69,7 @@ fun Application.main() {
     install(CallLogging) {
         level = Level.INFO
         // if filter returns true, the call is logged; if no filters are defined, everything is logged
-        filter { call -> call.request.path().startsWith(API_VERSION) }
+        filter { call -> call.request.path().startsWith(API_PATH) }
 //        format {
 //            "${it.request.httpMethod.value} ${it.request.path()}} => ${it.response.status()}"
 //        }
