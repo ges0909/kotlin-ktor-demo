@@ -17,6 +17,8 @@ import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
 import io.ktor.util.InternalAPI
 import io.ktor.util.encodeBase64
+import org.junit.FixMethodOrder
+import org.junit.runners.MethodSorters
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -24,13 +26,18 @@ private const val PERSONS_PATH = "/api/v1/persons"
 
 @InternalAPI
 @KtorExperimentalLocationsAPI
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class ApplicationTest {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private data class TestPerson(val id: Int? = null, val name: String, val age: Int)
+    data class TestPerson(val id: Int? = null, val name: String, val age: Int)
 
     private val credentials = "ger:ger123".encodeBase64()
     private val mapper = jacksonObjectMapper()
+
+    private companion object {
+        var id: Int? = null
+    }
 
 //    @BeforeTest fun setUp() {
 //    }
@@ -39,23 +46,24 @@ class ApplicationTest {
 //    @AfterTest fun tearDown() {
 //    }
 
-    @Test fun `when a person is created then it is returned`() = withTestApplication(Application::main) {
-
-        // create
-        val id = with(handleRequest(HttpMethod.Post, PERSONS_PATH) {
-            addHeader(HttpHeaders.Authorization, "Basic $credentials")
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            // setBody(mapOf("name" to "Vinz", "age" to 20).toString())
-            // setBody(Gson().toJson(TestPerson(name = "Vinzenz", age = 20)))
-            setBody(mapper.writeValueAsString(TestPerson(name = "Vinzenz", age = 20)))
-        }) {
-            assertEquals(HttpStatusCode.Created, response.status())
-            // Gson().fromJson(response.content.toString(), TestPerson::class.java).id
-            mapper.readValue<TestPerson>(response.content.toString()).id
+    @Test fun `1 create person`() {
+        id = withTestApplication(Application::main) {
+            with(handleRequest(HttpMethod.Post, PERSONS_PATH) {
+                addHeader(HttpHeaders.Authorization, "Basic $credentials")
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                // setBody(mapOf("name" to "Vinz", "age" to 20).toString())
+                // setBody(Gson().toJson(TestPerson(name = "Vinzenz", age = 20)))
+                setBody(mapper.writeValueAsString(TestPerson(name = "Vinzenz", age = 20)))
+            }) {
+                assertEquals(HttpStatusCode.Created, response.status())
+                // Gson().fromJson(response.content.toString(), TestPerson::class.java).id
+                mapper.readValue<TestPerson>(response.content.toString()).id
+            }
         }
+    }
 
-        // read
-        var person = with(handleRequest(HttpMethod.Get, "$PERSONS_PATH/$id") {
+    @Test fun `2 read created person`() = withTestApplication(Application::main) {
+        val person = with(handleRequest(HttpMethod.Get, "$PERSONS_PATH/$id") {
             addHeader(HttpHeaders.Authorization, "Basic $credentials")
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
@@ -64,8 +72,9 @@ class ApplicationTest {
         }
         assertEquals("Vinzenz", person.name)
         assertEquals(20, person.age)
+    }
 
-        // update
+    @Test fun `3 update person`() = withTestApplication(Application::main) {
         with(handleRequest(HttpMethod.Put, "$PERSONS_PATH/$id") {
             addHeader(HttpHeaders.Authorization, "Basic $credentials")
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
@@ -75,19 +84,22 @@ class ApplicationTest {
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
         }
+    }
 
-        // read
-        person = with(handleRequest(HttpMethod.Get, "$PERSONS_PATH/$id") {
+    @Test fun `4 read updated person`() = withTestApplication(Application::main) {
+        val person = with(handleRequest(HttpMethod.Get, "$PERSONS_PATH/$id") {
             addHeader(HttpHeaders.Authorization, "Basic $credentials")
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             // Gson().fromJson(response.content.toString(), TestPerson::class.java)
-            mapper.readValue(response.content.toString())
+            mapper.readValue<TestPerson>(response.content.toString())
         }
         assertEquals("Freddy", person.name)
         assertEquals(30, person.age)
 
-        // delete
+    }
+
+    @Test fun `5 delete person`() = withTestApplication(Application::main) {
         with(handleRequest(HttpMethod.Delete, "$PERSONS_PATH/$id") {
             addHeader(HttpHeaders.Authorization, "Basic $credentials")
         }) {

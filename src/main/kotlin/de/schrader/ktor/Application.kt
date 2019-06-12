@@ -1,7 +1,8 @@
 package de.schrader.ktor
 
 import arrow.core.getOrElse
-import com.ryanharter.ktor.moshi.moshi
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import de.schrader.ktor.controller.persons
@@ -27,6 +28,7 @@ import io.ktor.freemarker.FreeMarker
 import io.ktor.freemarker.FreeMarkerContent
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.jackson.jackson
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Locations
 import io.ktor.request.path
@@ -63,12 +65,12 @@ fun Application.main() {
         //    setPrettyPrinting()
         // }
 
-        // jackson {
-        //     setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        //     configure(SerializationFeature.INDENT_OUTPUT, true)
-        // }
+        jackson {
+            setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            configure(SerializationFeature.INDENT_OUTPUT, true)
+        }
 
-        moshi()
+        // moshi()
     }
 
     install(FreeMarker) {
@@ -151,7 +153,7 @@ private val appModule = module {
 
 private fun hikari(): HikariDataSource {
     val config = HikariConfig()
-    config.driverClassName = "org.h2.Driver"
+    // config.driverClassName = "org.h2.Driver"
     // config.jdbcUrl = "jdbc:h2:~/test;DATABASE_TO_UPPER=false"
     config.jdbcUrl = "jdbc:h2:mem:test;DATABASE_TO_UPPER=false"
     config.maximumPoolSize = 3
