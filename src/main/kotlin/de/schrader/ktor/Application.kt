@@ -77,7 +77,7 @@ fun Application.main() {
 
     install(Authentication) {
         basic(name = "auth") {
-            realm = "Ktor server"
+            realm = "Ktor Server"
             validate { credentials ->
                 if (credentials.password == "${credentials.name}123") User(credentials.name) else null
             }

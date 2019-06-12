@@ -1,6 +1,6 @@
 <html>
     <body>
-        <div>${displayName}</div>
+        <div>Logged in as: ${displayName}</div>
         <ul>
             <#list persons as person>
                 <li>${person.name}, ${person.age}</li>
