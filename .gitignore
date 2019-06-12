@@ -26,9 +26,11 @@ hs_err_pid*
 
 .gitignore
 .gradle/
-.idea/workspace.xml
+.idea/
 build/
 bin/
+out/
+
 .project
 .classpath
 .settings
