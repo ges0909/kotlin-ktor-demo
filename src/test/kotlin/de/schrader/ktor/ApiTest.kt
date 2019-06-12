@@ -27,8 +27,7 @@ private const val PERSONS_PATH = "/api/v1/persons"
 @InternalAPI
 @KtorExperimentalLocationsAPI
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-class ApplicationTest {
-
+class ApiTest {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     data class TestPerson(val id: Int? = null, val name: String, val age: Int)
 

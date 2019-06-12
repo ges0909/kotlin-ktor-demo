@@ -16,6 +16,7 @@ import freemarker.cache.ClassTemplateLoader
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.application.log
 import io.ktor.auth.Authentication
 import io.ktor.auth.authenticate
 import io.ktor.auth.authentication
@@ -50,7 +51,8 @@ const val API_VERSION = "v1"
 
 @KtorExperimentalLocationsAPI
 fun Application.main() {
-    // log.info("Install features")
+
+    log.info("Starting application ...")
 
     install(DefaultHeaders)
 
