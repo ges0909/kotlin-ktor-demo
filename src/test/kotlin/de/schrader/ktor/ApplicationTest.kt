@@ -15,16 +15,21 @@ import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
+import io.ktor.util.InternalAPI
+import io.ktor.util.encodeBase64
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 private const val PERSONS_PATH = "/api/v1/persons"
 
-class PersonTest {
+@InternalAPI
+@KtorExperimentalLocationsAPI
+class ApplicationTest {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    data class TestPerson(val id: Int? = null, val name: String, val age: Int)
+    private data class TestPerson(val id: Int? = null, val name: String, val age: Int)
 
+    private val credentials = "ger:ger123".encodeBase64()
     private val mapper = jacksonObjectMapper()
 
 //    @BeforeTest fun setUp() {
@@ -34,11 +39,11 @@ class PersonTest {
 //    @AfterTest fun tearDown() {
 //    }
 
-    @KtorExperimentalLocationsAPI
     @Test fun `when a person is created then it is returned`() = withTestApplication(Application::main) {
 
         // create
         val id = with(handleRequest(HttpMethod.Post, PERSONS_PATH) {
+            addHeader(HttpHeaders.Authorization, "Basic $credentials")
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             // setBody(mapOf("name" to "Vinz", "age" to 20).toString())
             // setBody(Gson().toJson(TestPerson(name = "Vinzenz", age = 20)))
@@ -51,6 +56,7 @@ class PersonTest {
 
         // read
         var person = with(handleRequest(HttpMethod.Get, "$PERSONS_PATH/$id") {
+            addHeader(HttpHeaders.Authorization, "Basic $credentials")
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             // Gson().fromJson(response.content.toString(), TestPerson::class.java)
@@ -61,6 +67,7 @@ class PersonTest {
 
         // update
         with(handleRequest(HttpMethod.Put, "$PERSONS_PATH/$id") {
+            addHeader(HttpHeaders.Authorization, "Basic $credentials")
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             // setBody(Gson().toJson(TestPerson(name = "Freddy", age = 30)))
             setBody(mapper.writeValueAsString(TestPerson(name = "Freddy", age = 30)))
@@ -71,6 +78,7 @@ class PersonTest {
 
         // read
         person = with(handleRequest(HttpMethod.Get, "$PERSONS_PATH/$id") {
+            addHeader(HttpHeaders.Authorization, "Basic $credentials")
         }) {
             assertEquals(HttpStatusCode.OK, response.status())
             // Gson().fromJson(response.content.toString(), TestPerson::class.java)
@@ -81,6 +89,7 @@ class PersonTest {
 
         // delete
         with(handleRequest(HttpMethod.Delete, "$PERSONS_PATH/$id") {
+            addHeader(HttpHeaders.Authorization, "Basic $credentials")
         }) {
             assertEquals(HttpStatusCode.NoContent, response.status())
         }

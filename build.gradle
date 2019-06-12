@@ -2,6 +2,7 @@ buildscript {
     repositories {
         jcenter()
     }
+    
     dependencies {
         classpath group: 'org.jetbrains.kotlin', name: 'kotlin-gradle-plugin', version: "$kotlin_version"
     }
@@ -19,7 +20,7 @@ version '0.0.1-SNAPSHOT'
 mainClassName = 'de.schrader.ktor.MainKt'
 
 sourceSets {
-    main.kotlin.srcDirs += [ 'src/main/kotlin' ]
+    main.kotlin.srcDirs += ['src/main/kotlin']
 }
 
 repositories {
@@ -36,9 +37,10 @@ dependencies {
     compile group: 'io.ktor', name: 'ktor-server-netty', version: "$ktor_version"
     // compile group: 'io.ktor', name: 'ktor-client', version: "$ktor_version"
     compile group: 'io.ktor', name: 'ktor-locations', version: "$ktor_version"
-    compile group: 'io.ktor', name: 'ktor-freemarker', version:"$ktor_version"
+    compile group: 'io.ktor', name: 'ktor-freemarker', version: "$ktor_version"
     compile group: 'io.ktor', name: 'ktor-gson', version: "$ktor_version"
     compile group: 'io.ktor', name: 'ktor-jackson', version: "$ktor_version"
+    compile group: 'io.ktor', name: 'ktor-auth', version: "$ktor_version"
 
     compile group: 'com.ryanharter.ktor', name: 'ktor-moshi', version: "$ktor_moshi_version"
 
