@@ -155,7 +155,7 @@ private val appModule = module {
 
 private fun hikari(): HikariDataSource {
     val config = HikariConfig()
-    // config.driverClassName = "org.h2.Driver"
+    config.driverClassName = "org.h2.Driver"
     // config.jdbcUrl = "jdbc:h2:~/test;DATABASE_TO_UPPER=false"
     config.jdbcUrl = "jdbc:h2:mem:test;DATABASE_TO_UPPER=false"
     config.maximumPoolSize = 3
