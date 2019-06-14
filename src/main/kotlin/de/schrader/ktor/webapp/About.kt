@@ -6,10 +6,10 @@ import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 
-private const val HOME_PATH = "/"
+private const val ABOUT_PATH = "/about"
 
-fun Route.home() {
-    get(HOME_PATH) {
-        call.respond(FreeMarkerContent("home.ftl", null))
+fun Route.about() {
+    get(ABOUT_PATH) {
+        call.respond(FreeMarkerContent("about.ftl", null))
     }
 }

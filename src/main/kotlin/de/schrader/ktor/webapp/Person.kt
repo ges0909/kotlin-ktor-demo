@@ -1,7 +1,6 @@
 package de.schrader.ktor.webapp
 
 import arrow.core.getOrElse
-import de.schrader.ktor.WEBAPP_PREFIX
 import de.schrader.ktor.model.Person
 import de.schrader.ktor.model.auth.User
 import de.schrader.ktor.service.PersonService
@@ -17,7 +16,7 @@ import io.ktor.routing.post
 import io.ktor.routing.route
 import org.koin.ktor.ext.inject
 
-private const val PERSON_PATH = "$WEBAPP_PREFIX/persons"
+private const val PERSON_PATH = "/persons"
 
 fun Route.person() {
     val personService: PersonService by inject()

@@ -9,6 +9,8 @@ import de.schrader.ktor.repository.PersonRepository
 import de.schrader.ktor.repository.PersonRepositoryImpl
 import de.schrader.ktor.service.PersonService
 import de.schrader.ktor.service.PersonServiceImpl
+import de.schrader.ktor.webapp.about
+import de.schrader.ktor.webapp.home
 import freemarker.cache.ClassTemplateLoader
 import io.ktor.application.Application
 import io.ktor.application.call
@@ -42,7 +44,6 @@ import de.schrader.ktor.webapp.person as person_webapp
 
 const val API_VERSION = "v1"
 const val API_PREFIX = "/api/$API_VERSION"
-const val WEBAPP_PREFIX = "/webapp"
 
 @KtorExperimentalLocationsAPI
 fun Application.main() {
@@ -110,6 +111,8 @@ fun Application.main() {
             resources("images")
         }
         authenticate("auth") {
+            home()
+            about()
             person_api()
             person_webapp()
 //          post<Person> { person ->
