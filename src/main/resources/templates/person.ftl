@@ -6,7 +6,7 @@
                 <li>${person.name}, ${person.age}</li>
             </#list>
         </ul>
-        <form method="post" action="/persons">
+        <form method="post" action="/webapp/persons">
             <label for="name">Name:</label> </br>
             <input id="name" type="text" name="name" /> </br>
             <label for="age">Age:</label> </br>

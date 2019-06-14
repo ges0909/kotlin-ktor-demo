@@ -3,8 +3,7 @@ package de.schrader.ktor.controller
 import arrow.core.None
 import arrow.core.Some
 import arrow.core.getOrElse
-import de.schrader.ktor.API_PATH
-import de.schrader.ktor.API_VERSION
+import de.schrader.ktor.API_PREFIX
 import de.schrader.ktor.model.Person
 import de.schrader.ktor.service.PersonService
 import io.ktor.application.call
@@ -20,14 +19,14 @@ import io.ktor.routing.put
 import io.ktor.routing.route
 import org.koin.ktor.ext.inject
 
-private const val PERSONS_PATH = "$API_PATH/$API_VERSION/persons"
+private const val PERSON_PATH = "$API_PREFIX/persons"
 
 @KtorExperimentalLocationsAPI
-fun Route.persons() {
+fun Route.person() {
 
     val personService: PersonService by inject()
 
-    route(PERSONS_PATH) {
+    route(PERSON_PATH) {
 
         get {
             val option = personService.findAll()

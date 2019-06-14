@@ -1,12 +1,9 @@
 package de.schrader.ktor
 
-import arrow.core.getOrElse
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import de.schrader.ktor.controller.persons
-import de.schrader.ktor.model.Person
 import de.schrader.ktor.model.auth.User
 import de.schrader.ktor.repository.PersonRepository
 import de.schrader.ktor.repository.PersonRepositoryImpl
@@ -19,35 +16,33 @@ import io.ktor.application.install
 import io.ktor.application.log
 import io.ktor.auth.Authentication
 import io.ktor.auth.authenticate
-import io.ktor.auth.authentication
 import io.ktor.auth.basic
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.features.StatusPages
 import io.ktor.freemarker.FreeMarker
-import io.ktor.freemarker.FreeMarkerContent
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.resources
+import io.ktor.http.content.static
 import io.ktor.jackson.jackson
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Locations
 import io.ktor.request.path
-import io.ktor.request.receiveParameters
-import io.ktor.response.respond
-import io.ktor.response.respondRedirect
 import io.ktor.response.respondText
-import io.ktor.routing.get
-import io.ktor.routing.post
 import io.ktor.routing.routing
 import org.jetbrains.exposed.sql.Database
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.inject
 import org.slf4j.event.Level
+import de.schrader.ktor.controller.person as person_api
+import de.schrader.ktor.webapp.person as person_webapp
 
-const val API_PATH = "/api"
 const val API_VERSION = "v1"
+const val API_PREFIX = "/api/$API_VERSION"
+const val WEBAPP_PREFIX = "/webapp"
 
 @KtorExperimentalLocationsAPI
 fun Application.main() {
@@ -95,7 +90,7 @@ fun Application.main() {
     install(CallLogging) {
         level = Level.INFO
         // if filter returns true, the call is logged; if no filters are defined, everything is logged
-        filter { call -> call.request.path().startsWith(API_PATH) }
+        filter { call -> call.request.path().startsWith(API_PREFIX) }
 //        format {
 //            "${it.request.httpMethod.value} ${it.request.path()}} => ${it.response.status()}"
 //        }
@@ -110,41 +105,20 @@ fun Application.main() {
     val personRepository: PersonRepository by inject()
     personRepository.createTable()
 
-    val personService: PersonService by inject()
-
     routing {
-        authenticate("auth") {
-
-            persons() // api
-
-            get("/persons") {
-                val user = call.authentication.principal as User
-                val persons = personService.findAll().getOrElse { emptyArray<List<Person>>() }
-                call.respond(
-                    FreeMarkerContent(
-                        "persons.ftl", mapOf(
-                            "displayName" to user.displayName,
-                            "persons" to persons
-                        )
-                    )
-                )
-            }
-            post("/persons") {
-                val params = call.receiveParameters()
-                val name = params["name"] ?: throw IllegalArgumentException("Missing parameter: name")
-                val age = params["age"] ?: throw IllegalArgumentException("Missing parameter: age")
-                personService.create(Person(name = name, age = age.toInt()))
-                call.respondRedirect("/persons")
-            }
+        static("/static") {
+            resources("images")
         }
-
-//        post<Person> { person ->
+        authenticate("auth") {
+            person_api()
+            person_webapp()
+//          post<Person> { person ->
 //            when (val thing = personService.create(person)) {
 //                is Some -> call.respond(HttpStatusCode.Created, thing.value)
 //                is None -> call.respond(HttpStatusCode.InternalServerError)
 //            }
 //        }
-
+        }
     }
 }
 
