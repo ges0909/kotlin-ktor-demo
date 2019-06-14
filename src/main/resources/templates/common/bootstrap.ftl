@@ -2,7 +2,7 @@
     <!doctype html>
     <html lang="en">
       <head>
-        <title>Server-Side Kotlin with Ktor</title>
+        <title>Ktor Demo</title>
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
       </head>
       <body>

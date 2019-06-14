@@ -38,9 +38,17 @@ fun Route.person() {
 
         post {
             val params = call.receiveParameters()
-            val name = params["name"] ?: throw IllegalArgumentException("Missing parameter: name")
-            val age = params["age"] ?: throw IllegalArgumentException("Missing parameter: age")
-            personService.create(Person(name = name, age = age.toInt()))
+            when (params["action"] ?: throw IllegalArgumentException("Missing parameter: action")) {
+                "add" -> {
+                    val name = params["name"] ?: throw IllegalArgumentException("Missing parameter: name")
+                    val age = params["age"] ?: throw IllegalArgumentException("Missing parameter: age")
+                    personService.create(Person(name = name, age = age.toInt()))
+                }
+                "delete" -> {
+                    val id = params["id"] ?: throw IllegalArgumentException("Missing parameter: id")
+                    personService.delete(id.toInt())
+                }
+            }
             call.respondRedirect(PERSON_PATH)
         }
     }
