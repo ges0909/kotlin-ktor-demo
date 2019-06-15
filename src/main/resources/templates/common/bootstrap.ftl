@@ -3,7 +3,7 @@
     <html lang="en">
       <head>
         <title>Ktor Demo</title>
-        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
       </head>
       <body>
         <#include "navbar.ftl">

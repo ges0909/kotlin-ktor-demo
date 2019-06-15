@@ -16,12 +16,12 @@ import io.ktor.routing.post
 import io.ktor.routing.route
 import org.koin.ktor.ext.inject
 
-private const val PERSON_PATH = "/persons"
+private const val PERSONS = "/persons"
 
 fun Route.person() {
     val personService: PersonService by inject()
 
-    route(PERSON_PATH) {
+    route(PERSONS) {
         get {
             val persons = personService.findAll().getOrElse { emptyArray<List<Person>>() }
             val user = call.authentication.principal as User
@@ -48,7 +48,7 @@ fun Route.person() {
                     personService.delete(id.toInt())
                 }
             }
-            call.respondRedirect(PERSON_PATH)
+            call.respondRedirect(PERSONS)
         }
     }
 }

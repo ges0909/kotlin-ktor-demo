@@ -19,14 +19,14 @@ import io.ktor.routing.put
 import io.ktor.routing.route
 import org.koin.ktor.ext.inject
 
-private const val PERSON_PATH = "$API_PREFIX/persons"
+private const val PERSONS = "$API_PREFIX/persons"
 
 @KtorExperimentalLocationsAPI
 fun Route.person() {
 
     val personService: PersonService by inject()
 
-    route(PERSON_PATH) {
+    route(PERSONS) {
 
         get {
             val option = personService.findAll()

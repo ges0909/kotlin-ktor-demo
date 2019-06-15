@@ -51,13 +51,11 @@ fun Application.main() {
     log.info("Starting application ...")
 
     install(DefaultHeaders)
-
     install(StatusPages) {
         exception<Throwable> { e ->
             call.respondText(e.localizedMessage, ContentType.Text.Plain, HttpStatusCode.InternalServerError)
         }
     }
-
     install(ContentNegotiation) {
         // gson {
         //    setPrettyPrinting()
@@ -70,11 +68,9 @@ fun Application.main() {
 
         // moshi()
     }
-
     install(FreeMarker) {
         templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
     }
-
     install(Authentication) {
         basic(name = "auth") {
             realm = "Ktor Server"
@@ -83,11 +79,9 @@ fun Application.main() {
             }
         }
     }
-
     install(Koin) {
         modules(appModule)
     }
-
     install(CallLogging) {
         level = Level.INFO
         // if filter returns true, the call is logged; if no filters are defined, everything is logged
@@ -96,7 +90,6 @@ fun Application.main() {
 //            "${it.request.httpMethod.value} ${it.request.path()}} => ${it.response.status()}"
 //        }
     }
-
     install(Locations)
 
     val db = Database.connect(hikari())

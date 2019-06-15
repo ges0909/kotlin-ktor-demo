@@ -2,14 +2,21 @@ package de.schrader.ktor.webapp
 
 import io.ktor.application.call
 import io.ktor.freemarker.FreeMarkerContent
+import io.ktor.locations.KtorExperimentalLocationsAPI
+import io.ktor.locations.Location
+import io.ktor.locations.get
 import io.ktor.response.respond
 import io.ktor.routing.Route
-import io.ktor.routing.get
 
-private const val HOME_PATH = "/"
+private const val HOME = "/"
 
+@KtorExperimentalLocationsAPI
+@Location(HOME)
+class Home
+
+@KtorExperimentalLocationsAPI
 fun Route.home() {
-    get(HOME_PATH) {
+    get<Home> {
         call.respond(FreeMarkerContent("home.ftl", null))
     }
 }
