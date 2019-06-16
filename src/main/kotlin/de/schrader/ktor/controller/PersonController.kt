@@ -29,8 +29,7 @@ fun Route.person() {
     route(PERSONS) {
 
         get {
-            val option = personService.findAll()
-            val persons = option.getOrElse { emptyArray<List<Person>>() }
+            val persons = personService.findAll()
             call.respond(HttpStatusCode.OK, persons)
         }
 

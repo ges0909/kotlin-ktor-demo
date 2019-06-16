@@ -1,11 +1,11 @@
 package de.schrader.ktor.service
 
 import arrow.core.Option
-import de.schrader.ktor.repository.PersonRepository
 import de.schrader.ktor.model.Person
+import de.schrader.ktor.repository.PersonRepository
 
 interface PersonService {
-    suspend fun findAll(): Option<List<Person>>
+    suspend fun findAll(): List<Person>
     suspend fun create(person: Person): Option<Person>
     suspend fun find(id: Int): Option<Person>
     suspend fun update(id: Int, person: Person): Int
@@ -14,7 +14,7 @@ interface PersonService {
 
 class PersonServiceImpl(private val personRepository: PersonRepository) : PersonService {
 
-    override suspend fun findAll(): Option<List<Person>> = personRepository.findAll()
+    override suspend fun findAll(): List<Person> = personRepository.findAll()
 
     override suspend fun create(person: Person): Option<Person> {
         val id = personRepository.create(person)

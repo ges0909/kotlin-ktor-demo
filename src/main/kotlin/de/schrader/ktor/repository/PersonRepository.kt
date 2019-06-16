@@ -1,12 +1,12 @@
 package de.schrader.ktor.repository
 
 import arrow.core.Option
+import arrow.core.singleOrNone
 import de.schrader.ktor.model.Person
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
@@ -26,7 +26,7 @@ class PersonRepositoryImpl : PersonRepository {
         val name = varchar("name", MAX_NAME_LENGTH)
         val age = integer("age")
     }
-
+    
     override fun createTable() = transaction {
         SchemaUtils.create(Persons)
     }
@@ -35,45 +35,33 @@ class PersonRepositoryImpl : PersonRepository {
         SchemaUtils.drop(Persons)
     }
 
-    override suspend fun findAll(): Option<List<Person>> = withContext(Dispatchers.IO) {
-        transaction {
-            val query = Persons.selectAll()
-            when {
-                query.none() -> Option.empty()
-                else -> Option.just(query.map { it.toPerson() })
-            }
+    override suspend fun find(id: Int): Option<Person> = sqlTransaction {
+        Persons.select { Persons.id eq id }
+            .mapNotNull { it.toPerson() }
+            .singleOrNone()
+    }
+
+    override suspend fun findAll(): List<Person> = sqlTransaction {
+        Persons.selectAll().map { it.toPerson() }
+    }
+
+    override suspend fun create(entity: Person): Int = sqlTransaction {
+        Persons.insert(entity.toRow()) get Persons.id
+    }
+
+    override suspend fun update(id: Int, entity: Person): Int = sqlTransaction {
+        Persons.update(where = { Persons.id eq id }) {
+            it[name] = entity.name
+            it[age] = entity.age
         }
     }
 
-    override suspend fun find(id: Int): Option<Person> = withContext(Dispatchers.IO) {
-        transaction {
-            val query = Persons.select { Persons.id eq id }
-            when {
-                query.none() -> Option.empty()
-                else -> Option.just(query.first().toPerson())
-            }
-        }
+    override suspend fun delete(id: Int): Int = sqlTransaction {
+        Persons.deleteWhere { Persons.id eq id }
     }
 
-    override suspend fun create(entity: Person): Int = withContext(Dispatchers.IO) {
-        transaction {
-            Persons.insert(entity.toRow()) get Persons.id
-        }
-    }
-
-    override suspend fun update(id: Int, entity: Person): Int = withContext(Dispatchers.IO) {
-        transaction {
-            Persons.update(where = { Persons.id eq id }) {
-                it[name] = entity.name
-                it[age] = entity.age
-            }
-        }
-    }
-
-    override suspend fun delete(id: Int): Int = withContext(Dispatchers.IO) {
-        transaction {
-            Persons.deleteWhere { Persons.id eq id }
-        }
+    override suspend fun deleteAll(): Int = sqlTransaction {
+        Persons.deleteAll()
     }
 
     private fun ResultRow.toPerson() = Person(

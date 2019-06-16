@@ -2,7 +2,7 @@ buildscript {
     repositories {
         jcenter()
     }
-    
+
     dependencies {
         classpath group: 'org.jetbrains.kotlin', name: 'kotlin-gradle-plugin', version: "$kotlin_version"
     }
@@ -44,17 +44,19 @@ dependencies {
 
     compile group: 'com.ryanharter.ktor', name: 'ktor-moshi', version: "$ktor_moshi_version"
 
-    compile group: 'org.koin', name: 'koin-ktor', version: "$ktor_koin_version"
+    compile group: 'org.koin', name: 'koin-ktor', version: "$koin_version"
     compile group: 'ch.qos.logback', name: 'logback-classic', version: "$logback_version"
 
     compile group: 'org.jetbrains.exposed', name: 'exposed', version: "$exposed_version"
     compile group: 'com.h2database', name: 'h2', version: "$h2_version"
-    compile group: 'com.zaxxer', name: 'HikariCP', version: "$hikari_version"
+    compile group: 'com.zaxxer', name: 'HikariCP', version: "$hikaricp_version"
 
     compile group: 'io.arrow-kt', name: 'arrow-core-data', version: "$arrow_version"
 
     testCompile group: 'io.ktor', name: 'ktor-server-tests', version: "$ktor_version"
+    testCompile group: 'org.koin', name: 'koin-test', version: "$koin_version"
     testCompile group: 'io.mockk', name: 'mockk', version: "$mockk_version"
+    testCompile group: 'org.assertj', name: 'assertj-core', version: "$assertj_version"
 }
 
 // gradlew serve [run]

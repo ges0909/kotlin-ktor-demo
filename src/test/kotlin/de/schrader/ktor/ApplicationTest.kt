@@ -17,12 +17,14 @@ import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
 import io.ktor.util.InternalAPI
 import io.ktor.util.encodeBase64
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.FixMethodOrder
 import org.junit.runners.MethodSorters
+import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-private const val PERSONS_PATH = "/api/v1/persons"
+private const val PERSONS = "/api/v1/persons"
 
 @InternalAPI
 @KtorExperimentalLocationsAPI
@@ -35,7 +37,7 @@ class ApplicationTest {
     private val mapper = jacksonObjectMapper()
 
     private companion object {
-        var id: Int? = null
+        var ID: Int? = null
     }
 
 //    @BeforeTest fun setUp() {
@@ -46,63 +48,94 @@ class ApplicationTest {
 //    }
 
     @Test fun `1 create person`() {
-        id = withTestApplication(Application::main) {
-            with(handleRequest(HttpMethod.Post, PERSONS_PATH) {
+        ID = withTestApplication(Application::main) {
+            with(handleRequest(HttpMethod.Post, PERSONS) {
                 addHeader(HttpHeaders.Authorization, "Basic $credentials")
                 addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                 // setBody(mapOf("name" to "Vinz", "age" to 20).toString())
                 // setBody(Gson().toJson(TestPerson(name = "Vinzenz", age = 20)))
                 setBody(mapper.writeValueAsString(TestPerson(name = "Vinzenz", age = 20)))
             }) {
-                assertEquals(HttpStatusCode.Created, response.status())
-                // Gson().fromJson(response.content.toString(), TestPerson::class.java).id
+                assertThat(response.status()).isEqualTo(HttpStatusCode.Created)
+                // Gson().fromJson(response.content.toString(), TestPerson::class.java).ID
                 mapper.readValue<TestPerson>(response.content.toString()).id
             }
         }
     }
 
     @Test fun `2 read created person`() = withTestApplication(Application::main) {
-        val person = with(handleRequest(HttpMethod.Get, "$PERSONS_PATH/$id") {
+        val person = with(handleRequest(HttpMethod.Get, "$PERSONS/$ID") {
             addHeader(HttpHeaders.Authorization, "Basic $credentials")
         }) {
-            assertEquals(HttpStatusCode.OK, response.status())
+            assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
             // Gson().fromJson(response.content.toString(), TestPerson::class.java)
             mapper.readValue<TestPerson>(response.content.toString())
         }
-        assertEquals("Vinzenz", person.name)
-        assertEquals(20, person.age)
+        assertThat(person.name).isEqualTo("Vinzenz")
+        assertThat(person.age).isEqualTo(20)
+        Unit
     }
 
     @Test fun `3 update person`() = withTestApplication(Application::main) {
-        with(handleRequest(HttpMethod.Put, "$PERSONS_PATH/$id") {
+        with(handleRequest(HttpMethod.Put, "$PERSONS/$ID") {
             addHeader(HttpHeaders.Authorization, "Basic $credentials")
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             // setBody(Gson().toJson(TestPerson(name = "Freddy", age = 30)))
             setBody(mapper.writeValueAsString(TestPerson(name = "Freddy", age = 30)))
-
         }) {
-            assertEquals(HttpStatusCode.OK, response.status())
+            assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
         }
+        Unit
     }
 
     @Test fun `4 read updated person`() = withTestApplication(Application::main) {
-        val person = with(handleRequest(HttpMethod.Get, "$PERSONS_PATH/$id") {
+        val person = with(handleRequest(HttpMethod.Get, "$PERSONS/$ID") {
             addHeader(HttpHeaders.Authorization, "Basic $credentials")
         }) {
-            assertEquals(HttpStatusCode.OK, response.status())
+            assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
             // Gson().fromJson(response.content.toString(), TestPerson::class.java)
             mapper.readValue<TestPerson>(response.content.toString())
         }
-        assertEquals("Freddy", person.name)
-        assertEquals(30, person.age)
-
+        assertThat(person.name).isEqualTo("Freddy")
+        assertThat(person.age).isEqualTo(30)
+        Unit
     }
 
     @Test fun `5 delete person`() = withTestApplication(Application::main) {
-        with(handleRequest(HttpMethod.Delete, "$PERSONS_PATH/$id") {
+        with(handleRequest(HttpMethod.Delete, "$PERSONS/$ID") {
             addHeader(HttpHeaders.Authorization, "Basic $credentials")
         }) {
-            assertEquals(HttpStatusCode.NoContent, response.status())
+            assertThat(response.status()).isEqualTo(HttpStatusCode.NoContent)
         }
+        Unit
+    }
+
+    @Test fun `find non-existing person returns not found`() = withTestApplication(Application::main) {
+        val id = Random.nextInt(0, 100)
+        val person = with(handleRequest(HttpMethod.Get, "$PERSONS/$id") {
+            addHeader(HttpHeaders.Authorization, "Basic $credentials")
+        }) {
+            assertThat(response.status()).isEqualTo(HttpStatusCode.NotFound)
+        }
+    }
+
+    @Test fun `delete non-existing person returns not found`() = withTestApplication(Application::main) {
+        val id = Random.nextInt(0, 100)
+        with(handleRequest(HttpMethod.Delete, "$PERSONS/$id") {
+            addHeader(HttpHeaders.Authorization, "Basic $credentials")
+        }) {
+            assertThat(response.status()).isEqualTo(HttpStatusCode.NotFound)
+        }
+        Unit
+    }
+
+    @Test fun `find all persons returns empty list`() = withTestApplication(Application::main) {
+        val list = with(handleRequest(HttpMethod.Get, "$PERSONS") {
+            addHeader(HttpHeaders.Authorization, "Basic $credentials")
+        }) {
+            assertEquals(HttpStatusCode.OK, response.status())
+            mapper.readValue<List<TestPerson>>(response.content.toString())
+        }
+        assertThat(list).isEmpty()
     }
 }

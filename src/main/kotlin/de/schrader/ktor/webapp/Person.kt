@@ -1,6 +1,5 @@
 package de.schrader.ktor.webapp
 
-import arrow.core.getOrElse
 import de.schrader.ktor.model.Person
 import de.schrader.ktor.model.auth.User
 import de.schrader.ktor.service.PersonService
@@ -23,7 +22,7 @@ fun Route.person() {
 
     route(PERSONS) {
         get {
-            val persons = personService.findAll().getOrElse { emptyArray<List<Person>>() }
+            val persons = personService.findAll()
             val user = call.authentication.principal as User
             call.respond(
                 FreeMarkerContent(
