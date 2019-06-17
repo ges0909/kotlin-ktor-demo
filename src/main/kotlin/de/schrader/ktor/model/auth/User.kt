@@ -1,5 +1,11 @@
 package de.schrader.ktor.model.auth
 
-import io.ktor.auth.Principal
+import java.io.Serializable
 
-data class User(val displayName: String) : Principal
+data class User(
+    val userId: String,
+    val email: String,
+    val displayName: String,
+    val passwordHash: String
+) : Serializable
+

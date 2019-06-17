@@ -1,7 +1,8 @@
-package de.schrader.ktor.repository
+package de.schrader.ktor.repository.common
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import de.schrader.ktor.repository.PersonRepository
 import org.jetbrains.exposed.sql.Database
 import org.koin.core.KoinComponent
 import org.koin.core.inject

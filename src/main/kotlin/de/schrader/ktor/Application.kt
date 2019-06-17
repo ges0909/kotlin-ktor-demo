@@ -3,7 +3,7 @@ package de.schrader.ktor
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.SerializationFeature
 import de.schrader.ktor.model.auth.User
-import de.schrader.ktor.repository.Database
+import de.schrader.ktor.repository.common.Database
 import de.schrader.ktor.repository.PersonRepository
 import de.schrader.ktor.repository.PersonRepositoryImpl
 import de.schrader.ktor.service.PersonService

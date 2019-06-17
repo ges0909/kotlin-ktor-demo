@@ -1,4 +1,4 @@
-package de.schrader.ktor.repository
+package de.schrader.ktor.repository.common
 
 import arrow.core.Option
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +14,7 @@ interface CrudRepository<E, I> {
     suspend fun update(id: I, entity: E): I
     suspend fun delete(id: I): I
     suspend fun deleteAll(): Int
-    suspend fun <T> sqlTransaction(stmt: () -> T): T = withContext(Dispatchers.IO) {
-        transaction { stmt() }
+    suspend fun <T> suspendableTransaction(dbStmt: () -> T): T = withContext(Dispatchers.IO) {
+        transaction { dbStmt() }
     }
 }

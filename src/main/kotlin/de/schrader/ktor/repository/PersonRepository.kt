@@ -3,6 +3,7 @@ package de.schrader.ktor.repository
 import arrow.core.Option
 import arrow.core.singleOrNone
 import de.schrader.ktor.model.Person
+import de.schrader.ktor.repository.common.CrudRepository
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
@@ -21,12 +22,12 @@ private const val MAX_NAME_LENGTH = 32
 
 class PersonRepositoryImpl : PersonRepository {
 
-    private object Persons : Table("PERSONS") {
+    private object Persons : Table("PERSON") {
         val id = integer("id").autoIncrement().primaryKey()
         val name = varchar("name", MAX_NAME_LENGTH)
         val age = integer("age")
     }
-    
+
     override fun createTable() = transaction {
         SchemaUtils.create(Persons)
     }
@@ -35,32 +36,32 @@ class PersonRepositoryImpl : PersonRepository {
         SchemaUtils.drop(Persons)
     }
 
-    override suspend fun find(id: Int): Option<Person> = sqlTransaction {
+    override suspend fun find(id: Int): Option<Person> = suspendableTransaction {
         Persons.select { Persons.id eq id }
             .mapNotNull { it.toPerson() }
             .singleOrNone()
     }
 
-    override suspend fun findAll(): List<Person> = sqlTransaction {
+    override suspend fun findAll(): List<Person> = suspendableTransaction {
         Persons.selectAll().map { it.toPerson() }
     }
 
-    override suspend fun create(entity: Person): Int = sqlTransaction {
+    override suspend fun create(entity: Person): Int = suspendableTransaction {
         Persons.insert(entity.toRow()) get Persons.id
     }
 
-    override suspend fun update(id: Int, entity: Person): Int = sqlTransaction {
+    override suspend fun update(id: Int, entity: Person): Int = suspendableTransaction {
         Persons.update(where = { Persons.id eq id }) {
             it[name] = entity.name
             it[age] = entity.age
         }
     }
 
-    override suspend fun delete(id: Int): Int = sqlTransaction {
+    override suspend fun delete(id: Int): Int = suspendableTransaction {
         Persons.deleteWhere { Persons.id eq id }
     }
 
-    override suspend fun deleteAll(): Int = sqlTransaction {
+    override suspend fun deleteAll(): Int = suspendableTransaction {
         Persons.deleteAll()
     }
 
