@@ -6,6 +6,7 @@
       <w>gson</w>
       <w>heike</w>
       <w>hikari</w>
+      <w>hmac</w>
       <w>jdbc</w>
       <w>johnrengelman</w>
       <w>koin</w>
@@ -15,6 +16,9 @@
       <w>moshi</w>
       <w>ryanharter</w>
       <w>schrader</w>
+      <w>signin</w>
+      <w>signout</w>
+      <w>signup</w>
       <w>testresources</w>
       <w>vinz</w>
       <w>vinzenz</w>
