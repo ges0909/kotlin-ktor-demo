@@ -8,7 +8,6 @@ import de.schrader.ktor.model.Person
 import de.schrader.ktor.service.PersonService
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
-import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
@@ -21,7 +20,6 @@ import org.koin.ktor.ext.inject
 
 private const val PERSONS = "$API_PREFIX/persons"
 
-@KtorExperimentalLocationsAPI
 fun Route.person() {
 
     val personService: PersonService by inject()

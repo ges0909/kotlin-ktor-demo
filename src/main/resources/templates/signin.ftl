@@ -13,7 +13,6 @@
               <#if error??>
                 <p>${error}</p>
               </#if>
-
               <div class="form-group">
                 <label for="userId">Username</label>
                 <input type="text" name="userId" class="form-control" id="userId" placeholder="Username">

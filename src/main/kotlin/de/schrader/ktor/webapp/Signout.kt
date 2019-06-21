@@ -1,20 +1,21 @@
 package de.schrader.ktor.webapp
 
+import de.schrader.ktor.repository.auth.UserRepository
 import io.ktor.application.call
-import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Location
 import io.ktor.locations.get
 import io.ktor.response.respondRedirect
 import io.ktor.routing.Route
+import org.koin.ktor.ext.inject
 
 private const val SIGNOUT = "/signout"
 
-@KtorExperimentalLocationsAPI
 @Location(SIGNOUT)
 class Signout
 
-@KtorExperimentalLocationsAPI
-fun Route.signout(hashFunction: (String) -> String) {
+fun Route.signout() {
+    val userRepository: UserRepository by inject()
+
     get<Signout> {
         call.respondRedirect { Signin() }
     }

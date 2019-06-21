@@ -3,20 +3,23 @@ package de.schrader.ktor.repository.common
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import de.schrader.ktor.repository.PersonRepository
+import de.schrader.ktor.repository.auth.UserRepository
 import org.jetbrains.exposed.sql.Database
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 object Database : KoinComponent {
 
+    private val userRepository: UserRepository by inject()
     private val personRepository: PersonRepository by inject()
 
     fun init() {
         /*val db = */ Database.connect(hikari())
-        personRepository.createTable()
 //        transaction {
 //            addLogger(StdOutSqlLogger)
 //        }
+        userRepository.createTable()
+        personRepository.createTable()
     }
 }
 

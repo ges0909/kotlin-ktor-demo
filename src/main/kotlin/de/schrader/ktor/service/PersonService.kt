@@ -16,12 +16,12 @@ class PersonServiceImpl(private val personRepository: PersonRepository) : Person
 
     override suspend fun findAll(): List<Person> = personRepository.findAll()
 
+    override suspend fun find(id: Int): Option<Person> = personRepository.find(id)
+
     override suspend fun create(person: Person): Option<Person> {
         val id = personRepository.create(person)
         return find(id)
     }
-
-    override suspend fun find(id: Int): Option<Person> = personRepository.find(id)
 
     override suspend fun update(id: Int, person: Person): Int = personRepository.update(id, person)
 

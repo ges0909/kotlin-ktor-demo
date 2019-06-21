@@ -18,13 +18,15 @@ import org.jetbrains.exposed.sql.update
 
 interface PersonRepository : CrudRepository<Person, Int>
 
-private const val MAX_NAME_LENGTH = 32
+private const val MAX_NAME_COLUMN_LENGTH = 32
+private const val MAX_USER_ID_COLUMN_LENGTH = 20
 
 class PersonRepositoryImpl : PersonRepository {
 
     private object Persons : Table("PERSON") {
         val id = integer("id").autoIncrement().primaryKey()
-        val name = varchar("name", MAX_NAME_LENGTH)
+        val userId = varchar("userId", MAX_USER_ID_COLUMN_LENGTH).primaryKey()
+        val name = varchar("name", MAX_NAME_COLUMN_LENGTH)
         val age = integer("age")
     }
 
@@ -67,11 +69,13 @@ class PersonRepositoryImpl : PersonRepository {
 
     private fun ResultRow.toPerson() = Person(
         id = this[Persons.id],
+        userId = this[Persons.userId],
         name = this[Persons.name],
         age = this[Persons.age]
     )
 
     private fun Person.toRow(): Persons.(UpdateBuilder<*>) -> Unit = {
+        it[userId] = this@toRow.userId
         it[name] = this@toRow.name
         it[age] = this@toRow.age
     }

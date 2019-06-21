@@ -11,7 +11,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
@@ -27,11 +26,10 @@ import kotlin.test.assertEquals
 private const val PERSONS = "/api/v1/persons"
 
 @InternalAPI
-@KtorExperimentalLocationsAPI
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class ApplicationTest {
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    data class TestPerson(val id: Int? = null, val name: String, val age: Int)
+    data class TestPerson(val id: Int? = null, val userId: String = "", val name: String, val age: Int)
 
     private val credentials = "ger:ger123".encodeBase64()
     private val mapper = jacksonObjectMapper()
