@@ -1,12 +1,15 @@
 package de.schrader.ktor.webapp
 
-import de.schrader.ktor.repository.auth.UserRepository
+import de.schrader.ktor.Session
+import io.ktor.application.application
 import io.ktor.application.call
 import io.ktor.locations.Location
 import io.ktor.locations.get
+import io.ktor.locations.locations
 import io.ktor.response.respondRedirect
 import io.ktor.routing.Route
-import org.koin.ktor.ext.inject
+import io.ktor.sessions.clear
+import io.ktor.sessions.sessions
 
 private const val SIGNOUT = "/signout"
 
@@ -14,9 +17,8 @@ private const val SIGNOUT = "/signout"
 class Signout
 
 fun Route.signout() {
-    val userRepository: UserRepository by inject()
-
     get<Signout> {
-        call.respondRedirect { Signin() }
+        call.sessions.clear<Session>()
+        call.respondRedirect(application.locations.href(Signin()))
     }
 }

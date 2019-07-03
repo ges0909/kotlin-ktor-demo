@@ -1,8 +1,5 @@
 package de.schrader.ktor.controller
 
-import arrow.core.None
-import arrow.core.Some
-import arrow.core.getOrElse
 import de.schrader.ktor.API_PREFIX
 import de.schrader.ktor.model.Person
 import de.schrader.ktor.service.PersonService
@@ -33,21 +30,14 @@ fun Route.person() {
 
         get("/{id}") {
             val id = call.parameters["id"]!!.toInt()
-            when (val option = personService.find(id)) {
-                is Some -> call.respond(HttpStatusCode.OK, option.getOrElse { "" })
-                is None -> call.respond(HttpStatusCode.NotFound)
-            }
+            personService.find(id)?.let { return@get call.respond(HttpStatusCode.OK, it) }
+            call.respond(HttpStatusCode.NotFound)
         }
 
         post {
             val person = call.receive<Person>()
-            when (val option = personService.create(person)) {
-                is Some -> {
-                    // val path = locations.href(option.getOrElse { "" })
-                    call.respond(HttpStatusCode.Created, option.getOrElse { "" })
-                }
-                is None -> call.respond(HttpStatusCode.InternalServerError)
-            }
+            personService.create(person)?.let { return@post call.respond(HttpStatusCode.Created, it) }
+            call.respond(HttpStatusCode.InternalServerError)
         }
 
         put("/{id}") {

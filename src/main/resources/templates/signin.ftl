@@ -11,7 +11,7 @@
             <div class="panel-body">
                 <form action="/signin" method="POST">
                     <#if error??>
-                        <p>${error}</p>
+                        <div class="alert alert-warning" role="alert">${error}</div>
                     </#if>
                     <div class="form-group">
                         <label for="userId">Username</label>

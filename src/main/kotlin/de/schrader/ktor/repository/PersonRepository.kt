@@ -1,7 +1,5 @@
 package de.schrader.ktor.repository
 
-import arrow.core.Option
-import arrow.core.singleOrNone
 import de.schrader.ktor.model.Person
 import de.schrader.ktor.repository.common.CrudRepository
 import org.jetbrains.exposed.sql.ResultRow
@@ -38,14 +36,10 @@ class PersonRepositoryImpl : PersonRepository {
         SchemaUtils.drop(Persons)
     }
 
-    override suspend fun find(id: Int): Option<Person> = suspendableTransaction {
+    override suspend fun findById(id: Int): Person? = suspendableTransaction {
         Persons.select { Persons.id eq id }
             .mapNotNull { it.toPerson() }
-            .singleOrNone()
-    }
-
-    override suspend fun findAll(): List<Person> = suspendableTransaction {
-        Persons.selectAll().map { it.toPerson() }
+            .firstOrNull()
     }
 
     override suspend fun create(entity: Person): Int = suspendableTransaction {
@@ -61,6 +55,10 @@ class PersonRepositoryImpl : PersonRepository {
 
     override suspend fun delete(id: Int): Int = suspendableTransaction {
         Persons.deleteWhere { Persons.id eq id }
+    }
+
+    override suspend fun findAll(): List<Person> = suspendableTransaction {
+        Persons.selectAll().map { it.toPerson() }
     }
 
     override suspend fun deleteAll(): Int = suspendableTransaction {

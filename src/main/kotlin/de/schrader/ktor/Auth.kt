@@ -1,7 +1,7 @@
 package de.schrader.ktor
 
-import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
+import io.ktor.config.HoconApplicationConfig
 import io.ktor.util.hex
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
@@ -9,11 +9,10 @@ import javax.crypto.spec.SecretKeySpec
 const val MIN_USER_ID_LENGTH = 4
 const val MIN_PASSWORD_LENGTH = 6
 
-val config: Config = ConfigFactory.load()
+val config = HoconApplicationConfig(ConfigFactory.load()) // manual loading of default config file 'application.conf'
+val hashKey: String = config.propertyOrNull("ktor.demo.secret")?.getString() ?: ""
 
-val hashKey = hex(config.getString("secret"))
-
-val hmacKey = SecretKeySpec(hashKey, "hmacSHA1")
+val hmacKey = SecretKeySpec(hex(hashKey), "hmacSHA1")
 
 fun hash(password: String): String {
     val hmac = Mac.getInstance("hmacSHA1")

@@ -1,12 +1,11 @@
 package de.schrader.ktor.repository.auth
 
-import arrow.core.Option
-import arrow.core.singleOrNone
 import de.schrader.ktor.model.auth.User
 import de.schrader.ktor.repository.common.CrudRepository
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
@@ -22,7 +21,8 @@ private const val MAX_DISPLAY_NAME_COLUMN_LENGTH = 256
 private const val MAX_PASSWORD_HASH_COLUMN_LENGTH = 64
 
 interface UserRepository : CrudRepository<User, String> {
-    suspend fun finByEmail(email: String): Option<User>
+    suspend fun findByIdAndHash(userId: String, hash: String): User?
+    suspend fun findByEmail(email: String): User?
 }
 
 class UserRepositoryImpl : UserRepository {
@@ -42,14 +42,10 @@ class UserRepositoryImpl : UserRepository {
         SchemaUtils.drop(Users)
     }
 
-    override suspend fun find(id: String): Option<User> = suspendableTransaction {
+    override suspend fun findById(id: String): User? = suspendableTransaction {
         Users.select { Users.userId eq id }
             .mapNotNull { it.toUser() }
-            .singleOrNone()
-    }
-
-    override suspend fun findAll(): List<User> = suspendableTransaction {
-        Users.selectAll().map { it.toUser() }
+            .firstOrNull()
     }
 
     override suspend fun create(entity: User): String = suspendableTransaction {
@@ -68,14 +64,24 @@ class UserRepositoryImpl : UserRepository {
         Users.deleteWhere { Users.userId eq id }
     }
 
+    override suspend fun findAll(): List<User> = suspendableTransaction {
+        Users.selectAll().map { it.toUser() }
+    }
+
     override suspend fun deleteAll(): Int = suspendableTransaction {
         Users.deleteAll()
     }
 
-    override suspend fun finByEmail(email: String): Option<User> = suspendableTransaction {
+    override suspend fun findByIdAndHash(userId: String, hash: String): User? = suspendableTransaction {
+        Users.select { (Users.userId eq userId) and (Users.passwordHash eq hash) }
+            .mapNotNull { it.toUser() }
+            .firstOrNull()
+    }
+
+    override suspend fun findByEmail(email: String): User? = suspendableTransaction {
         Users.select { Users.email eq email }
             .mapNotNull { it.toUser() }
-            .singleOrNone()
+            .firstOrNull()
     }
 
     private fun ResultRow.toUser() = User(

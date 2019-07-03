@@ -33,6 +33,8 @@ import io.ktor.locations.Locations
 import io.ktor.request.path
 import io.ktor.response.respondText
 import io.ktor.routing.routing
+import io.ktor.sessions.Sessions
+import io.ktor.sessions.cookie
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.slf4j.event.Level
@@ -49,8 +51,9 @@ fun Application.main() {
     install(DefaultHeaders)
 
     install(StatusPages) {
-        exception<Throwable> { e ->
-            call.respondText(e.localizedMessage, ContentType.Text.Plain, HttpStatusCode.InternalServerError)
+        exception<Throwable> { ex ->
+            call.respondText(ex.localizedMessage, ContentType.Text.Plain, HttpStatusCode.InternalServerError)
+            throw ex
         }
     }
 
@@ -93,6 +96,10 @@ fun Application.main() {
     }
 
     install(Locations)
+
+    install(Sessions) {
+        cookie<Session>("COOKIE_NAME")
+    }
 
     Database.init()
 

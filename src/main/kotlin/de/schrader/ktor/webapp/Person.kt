@@ -13,7 +13,7 @@ import io.ktor.routing.post
 import io.ktor.routing.route
 import org.koin.ktor.ext.inject
 
-private const val PERSONS = "/persons"
+const val PERSONS = "/persons"
 
 fun Route.person() {
     val personService: PersonService by inject()

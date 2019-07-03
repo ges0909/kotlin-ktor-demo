@@ -51,7 +51,7 @@ dependencies {
     compile group: 'com.h2database', name: 'h2', version: "$h2_version"
     compile group: 'com.zaxxer', name: 'HikariCP', version: "$hikaricp_version"
 
-    compile group: 'io.arrow-kt', name: 'arrow-core-data', version: "$arrow_version"
+    // compile group: 'io.arrow-kt', name: 'arrow-core-data', version: "$arrow_version"
 
     testCompile group: 'io.ktor', name: 'ktor-server-tests', version: "$ktor_version"
     testCompile group: 'org.koin', name: 'koin-test', version: "$koin_version"
@@ -60,8 +60,10 @@ dependencies {
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-    kotlinOptions.freeCompilerArgs += ["-Xuse-experimental=io.ktor.locations.KtorExperimentalLocationsAPI"]
-    kotlinOptions.freeCompilerArgs += ["-Xuse-experimental=io.ktor.util.KtorExperimentalAPI"]
+    kotlinOptions {
+        freeCompilerArgs += "-Xuse-experimental=io.ktor.locations.KtorExperimentalLocationsAPI"
+        freeCompilerArgs += "-Xuse-experimental=io.ktor.util.KtorExperimentalAPI"
+    }
 }
 
 // gradlew serve [run]
