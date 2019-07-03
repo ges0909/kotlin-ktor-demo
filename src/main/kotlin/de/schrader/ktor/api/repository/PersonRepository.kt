@@ -1,7 +1,7 @@
-package de.schrader.ktor.repository
+package de.schrader.ktor.api.repository
 
-import de.schrader.ktor.model.Person
-import de.schrader.ktor.repository.common.CrudRepository
+import de.schrader.ktor.api.model.Person
+import de.schrader.ktor.common.CrudRepository
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table

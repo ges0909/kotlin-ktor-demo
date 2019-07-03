@@ -1,7 +1,6 @@
-package de.schrader.ktor.repository.auth
+package de.schrader.ktor.auth
 
-import de.schrader.ktor.model.auth.User
-import de.schrader.ktor.repository.common.CrudRepository
+import de.schrader.ktor.common.CrudRepository
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table

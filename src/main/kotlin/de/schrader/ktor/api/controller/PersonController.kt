@@ -1,8 +1,8 @@
-package de.schrader.ktor.controller
+package de.schrader.ktor.api.controller
 
 import de.schrader.ktor.API_PREFIX
-import de.schrader.ktor.model.Person
-import de.schrader.ktor.service.PersonService
+import de.schrader.ktor.api.model.Person
+import de.schrader.ktor.api.service.PersonService
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive

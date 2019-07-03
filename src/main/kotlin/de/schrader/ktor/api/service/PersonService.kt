@@ -1,7 +1,7 @@
-package de.schrader.ktor.service
+package de.schrader.ktor.api.service
 
-import de.schrader.ktor.model.Person
-import de.schrader.ktor.repository.PersonRepository
+import de.schrader.ktor.api.model.Person
+import de.schrader.ktor.api.repository.PersonRepository
 
 interface PersonService {
     suspend fun find(id: Int): Person?

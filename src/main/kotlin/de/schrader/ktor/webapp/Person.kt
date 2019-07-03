@@ -1,7 +1,7 @@
 package de.schrader.ktor.webapp
 
-import de.schrader.ktor.model.Person
-import de.schrader.ktor.service.PersonService
+import de.schrader.ktor.api.model.Person
+import de.schrader.ktor.api.service.PersonService
 import io.ktor.application.call
 import io.ktor.freemarker.FreeMarkerContent
 import io.ktor.request.receiveParameters
@@ -38,7 +38,13 @@ fun Route.person() {
                 "add" -> {
                     val name = params["name"] ?: throw IllegalArgumentException("Missing parameter: name")
                     val age = params["age"] ?: throw IllegalArgumentException("Missing parameter: age")
-                    personService.create(Person(userId = "", name = name, age = age.toInt()))
+                    personService.create(
+                        Person(
+                            userId = "",
+                            name = name,
+                            age = age.toInt()
+                        )
+                    )
                 }
                 "delete" -> {
                     val id = params["id"] ?: throw IllegalArgumentException("Missing parameter: id")

@@ -1,11 +1,11 @@
 package de.schrader.ktor.webapp
 
-import de.schrader.ktor.MIN_PASSWORD_LENGTH
-import de.schrader.ktor.MIN_USER_ID_LENGTH
-import de.schrader.ktor.Session
-import de.schrader.ktor.isUserIdValid
-import de.schrader.ktor.model.auth.User
-import de.schrader.ktor.repository.auth.UserRepository
+import de.schrader.ktor.auth.MIN_PASSWORD_LENGTH
+import de.schrader.ktor.auth.MIN_USER_ID_LENGTH
+import de.schrader.ktor.auth.Session
+import de.schrader.ktor.auth.User
+import de.schrader.ktor.auth.UserRepository
+import de.schrader.ktor.auth.isUserIdValid
 import io.ktor.application.application
 import io.ktor.application.call
 import io.ktor.application.log
@@ -49,7 +49,7 @@ fun Route.signup(hashFunction: (String) -> String) {
         val params = call.receive<Parameters>()
 
         val userId = params["userId"]
-            ?: return@post call.respondRedirect(application.locations.href(Signup(error = "Missing user id")))
+            ?: return@post call.respondRedirect(application.locations.href(Signup(error = "Missing user name")))
         val password = params["password"]
             ?: return@post call.respondRedirect(application.locations.href(Signup(error = "Missing password")))
         val displayName = params["displayName"]
@@ -69,13 +69,13 @@ fun Route.signup(hashFunction: (String) -> String) {
 
         when {
             userId.length < MIN_USER_ID_LENGTH -> return@post call.respondRedirect(
-                application.locations.href(signup.copy(error = "User id should be at least $MIN_USER_ID_LENGTH chars long"))
+                application.locations.href(signup.copy(error = "User name should be at least $MIN_USER_ID_LENGTH chars long"))
             )
             password.length < MIN_PASSWORD_LENGTH -> return@post call.respondRedirect(
                 application.locations.href(signup.copy(error = "Password should be at least $MIN_PASSWORD_LENGTH chars long"))
             )
             !isUserIdValid(userId) -> return@post call.respondRedirect(
-                application.locations.href(signup.copy(error = "User id should consists of digits, chars, dots and underscores"))
+                application.locations.href(signup.copy(error = "User name should consists of digits, chars, dots and underscores"))
             )
             userRepository.findById(userId) != null -> return@post call.respondRedirect(
                 application.locations.href(signup.copy(error = "User '$userId' is already registered"))

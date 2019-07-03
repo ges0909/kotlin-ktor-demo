@@ -1,4 +1,4 @@
-package de.schrader.ktor
+package de.schrader.ktor.auth
 
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.HoconApplicationConfig

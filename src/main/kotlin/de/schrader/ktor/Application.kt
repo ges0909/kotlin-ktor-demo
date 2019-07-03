@@ -2,13 +2,15 @@ package de.schrader.ktor
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.SerializationFeature
-import de.schrader.ktor.repository.PersonRepository
-import de.schrader.ktor.repository.PersonRepositoryImpl
-import de.schrader.ktor.repository.auth.UserRepository
-import de.schrader.ktor.repository.auth.UserRepositoryImpl
-import de.schrader.ktor.repository.common.Database
-import de.schrader.ktor.service.PersonService
-import de.schrader.ktor.service.PersonServiceImpl
+import de.schrader.ktor.api.repository.PersonRepository
+import de.schrader.ktor.api.repository.PersonRepositoryImpl
+import de.schrader.ktor.auth.UserRepository
+import de.schrader.ktor.auth.UserRepositoryImpl
+import de.schrader.ktor.common.Database
+import de.schrader.ktor.api.service.PersonService
+import de.schrader.ktor.api.service.PersonServiceImpl
+import de.schrader.ktor.auth.Session
+import de.schrader.ktor.auth.hash
 import de.schrader.ktor.webapp.about
 import de.schrader.ktor.webapp.home
 import de.schrader.ktor.webapp.signin
@@ -38,7 +40,7 @@ import io.ktor.sessions.cookie
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.slf4j.event.Level
-import de.schrader.ktor.controller.person as person_api
+import de.schrader.ktor.api.controller.person as person_api
 import de.schrader.ktor.webapp.person as person_webapp
 
 const val API_VERSION = "v1"

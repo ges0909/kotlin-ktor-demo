@@ -1,4 +1,4 @@
-package de.schrader.ktor.model
+package de.schrader.ktor.api.model
 
 // import io.ktor.locations.Location
 

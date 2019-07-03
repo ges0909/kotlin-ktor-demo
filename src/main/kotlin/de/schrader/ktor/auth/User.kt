@@ -1,4 +1,4 @@
-package de.schrader.ktor.model.auth
+package de.schrader.ktor.auth
 
 data class User(
     val userId: String,

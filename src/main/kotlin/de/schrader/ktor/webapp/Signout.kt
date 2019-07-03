@@ -1,6 +1,6 @@
 package de.schrader.ktor.webapp
 
-import de.schrader.ktor.Session
+import de.schrader.ktor.auth.Session
 import io.ktor.application.application
 import io.ktor.application.call
 import io.ktor.locations.Location

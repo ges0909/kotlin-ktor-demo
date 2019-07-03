@@ -1,4 +1,4 @@
-package de.schrader.ktor.repository.common
+package de.schrader.ktor.common
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
