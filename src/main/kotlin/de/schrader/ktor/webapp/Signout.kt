@@ -1,6 +1,7 @@
 package de.schrader.ktor.webapp
 
 import de.schrader.ktor.auth.Session
+import de.schrader.ktor.redirect
 import io.ktor.application.application
 import io.ktor.application.call
 import io.ktor.locations.Location
@@ -19,6 +20,6 @@ class Signout
 fun Route.signout() {
     get<Signout> {
         call.sessions.clear<Session>()
-        call.respondRedirect(application.locations.href(Signin()))
+        call.redirect(Signin())
     }
 }

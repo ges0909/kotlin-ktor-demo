@@ -26,8 +26,8 @@ object Database : KoinComponent {
 private fun hikari(): HikariDataSource {
     val config = HikariConfig()
     config.driverClassName = "org.h2.Driver"
-    config.jdbcUrl = "jdbc:h2:mem:test;DATABASE_TO_UPPER=FALSE"
-    // config.jdbcUrl = "jdbc:h2:~/test;DATABASE_TO_UPPER=FALSE"
+    // config.jdbcUrl = "jdbc:h2:mem:test;DATABASE_TO_UPPER=FALSE"
+    config.jdbcUrl = "jdbc:h2:~/test;DATABASE_TO_UPPER=FALSE"
     config.maximumPoolSize = 3
     config.isAutoCommit = false
     config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"

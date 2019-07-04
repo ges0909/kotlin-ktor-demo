@@ -1,6 +1,5 @@
 package de.schrader.ktor
 
-import io.ktor.locations.Locations
 import io.ktor.server.netty.EngineMain
 
 /**

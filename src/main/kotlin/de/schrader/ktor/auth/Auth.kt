@@ -10,9 +10,10 @@ const val MIN_USER_ID_LENGTH = 4
 const val MIN_PASSWORD_LENGTH = 6
 
 val config = HoconApplicationConfig(ConfigFactory.load()) // manual loading of default config file 'application.conf'
-val hashKey: String = config.propertyOrNull("ktor.demo.secret")?.getString() ?: ""
+val secret: String = config.propertyOrNull("ktor.demo.secret")?.getString() ?: ""
 
-val hmacKey = SecretKeySpec(hex(hashKey), "hmacSHA1")
+val hashKey = hex(secret)
+val hmacKey = SecretKeySpec(hashKey, "hmacSHA1")
 
 fun hash(password: String): String {
     val hmac = Mac.getInstance("hmacSHA1")

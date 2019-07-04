@@ -30,7 +30,7 @@ fun Route.person() {
 
         get("/{id}") {
             val id = call.parameters["id"]!!.toInt()
-            personService.find(id)?.let { return@get call.respond(HttpStatusCode.OK, it) }
+            personService.findById(id)?.let { return@get call.respond(HttpStatusCode.OK, it) }
             call.respond(HttpStatusCode.NotFound)
         }
 
