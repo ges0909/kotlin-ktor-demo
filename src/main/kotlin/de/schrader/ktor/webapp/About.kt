@@ -1,5 +1,6 @@
 package de.schrader.ktor.webapp
 
+import de.schrader.ktor.ROUTE_ABOUT
 import de.schrader.ktor.auth.Session
 import de.schrader.ktor.auth.UserRepository
 import io.ktor.application.call
@@ -12,9 +13,7 @@ import io.ktor.sessions.get
 import io.ktor.sessions.sessions
 import org.koin.ktor.ext.inject
 
-private const val ABOUT = "/about"
-
-@Location(ABOUT)
+@Location(ROUTE_ABOUT)
 class About
 
 fun Route.about() {

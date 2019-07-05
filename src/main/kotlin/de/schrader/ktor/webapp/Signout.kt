@@ -1,20 +1,16 @@
 package de.schrader.ktor.webapp
 
+import de.schrader.ktor.ROUTE_SIGNOUT
 import de.schrader.ktor.auth.Session
 import de.schrader.ktor.redirect
-import io.ktor.application.application
 import io.ktor.application.call
 import io.ktor.locations.Location
 import io.ktor.locations.get
-import io.ktor.locations.locations
-import io.ktor.response.respondRedirect
 import io.ktor.routing.Route
 import io.ktor.sessions.clear
 import io.ktor.sessions.sessions
 
-private const val SIGNOUT = "/signout"
-
-@Location(SIGNOUT)
+@Location(ROUTE_SIGNOUT)
 class Signout
 
 fun Route.signout() {

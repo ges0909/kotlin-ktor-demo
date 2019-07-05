@@ -1,5 +1,6 @@
 package de.schrader.ktor.webapp
 
+import de.schrader.ktor.ROUTE_PERSON
 import de.schrader.ktor.api.model.Person
 import de.schrader.ktor.api.service.PersonService
 import de.schrader.ktor.auth.Session
@@ -20,13 +21,11 @@ import io.ktor.sessions.get
 import io.ktor.sessions.sessions
 import org.koin.ktor.ext.inject
 
-const val PERSONS = "/persons"
-
 fun Route.person(hashFunction: (String) -> String) {
     val userRepository: UserRepository by inject()
     val personService: PersonService by inject()
 
-    route(PERSONS) {
+    route(ROUTE_PERSON) {
         get {
             // val user = call.authentication.principal as User
             val user = call.sessions.get<Session>()?.let { userRepository.findById(it.userId) }
@@ -66,7 +65,7 @@ fun Route.person(hashFunction: (String) -> String) {
                     personService.delete(id.toInt())
                 }
             }
-            call.respondRedirect(PERSONS)
+            call.respondRedirect(ROUTE_PERSON)
         }
     }
 }

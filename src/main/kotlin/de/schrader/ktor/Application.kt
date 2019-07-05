@@ -57,6 +57,14 @@ import de.schrader.ktor.webapp.person as person_webapp
 
 const val API_VERSION = "v1"
 const val API_PREFIX = "/api/$API_VERSION"
+
+const val ROUTE_HOME = "/"
+const val ROUTE_ABOUT = "/about"
+const val ROUTE_SIGNIN = "/signin"
+const val ROUTE_SIGNUP = "/signup"
+const val ROUTE_SIGNOUT = "/signout"
+const val ROUTE_PERSON = "/persons"
+
 const val SESSION_COOKIE_NAME = "KTOR_SESSION"
 
 fun Application.main() {

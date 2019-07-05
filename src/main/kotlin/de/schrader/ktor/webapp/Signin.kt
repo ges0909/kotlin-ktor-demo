@@ -1,5 +1,7 @@
 package de.schrader.ktor.webapp
 
+import de.schrader.ktor.ROUTE_PERSON
+import de.schrader.ktor.ROUTE_SIGNIN
 import de.schrader.ktor.auth.MIN_PASSWORD_LENGTH
 import de.schrader.ktor.auth.MIN_USER_ID_LENGTH
 import de.schrader.ktor.auth.Session
@@ -21,10 +23,8 @@ import io.ktor.sessions.sessions
 import io.ktor.sessions.set
 import org.koin.ktor.ext.inject
 
-private const val SIGNIN = "/signin"
-
-@Location(SIGNIN)
-data class Signin(val userId: String = "", var error: String? = null)
+@Location(ROUTE_SIGNIN)
+data class Signin(val userId: String? = null, var error: String? = null)
 
 fun Route.signin(hashFunction: (String) -> String) {
     val userRepository: UserRepository by inject()
@@ -32,7 +32,7 @@ fun Route.signin(hashFunction: (String) -> String) {
     get<Signin> {
         call.sessions.get<Session>()?.let { session ->
             userRepository.findById(session.userId)?.let {
-                return@get call.respondRedirect(PERSONS)
+                return@get call.respondRedirect(ROUTE_PERSON)
             }
         }
         call.respond(FreeMarkerContent("signin.ftl", mapOf("userId" to it.userId, "error" to it.error)))
@@ -60,6 +60,6 @@ fun Route.signin(hashFunction: (String) -> String) {
         }
 
         call.sessions.set(Session(userId))
-        call.respondRedirect(PERSONS)
+        call.respondRedirect(ROUTE_PERSON)
     }
 }
