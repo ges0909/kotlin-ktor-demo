@@ -1,6 +1,6 @@
 package de.schrader.ktor.webapp
 
-import de.schrader.ktor.ROUTE_SIGNOUT
+import de.schrader.ktor.SIGNOUT_ROUTE
 import de.schrader.ktor.auth.Session
 import de.schrader.ktor.redirect
 import io.ktor.application.call
@@ -10,7 +10,7 @@ import io.ktor.routing.Route
 import io.ktor.sessions.clear
 import io.ktor.sessions.sessions
 
-@Location(ROUTE_SIGNOUT)
+@Location(SIGNOUT_ROUTE)
 class Signout
 
 fun Route.signout() {

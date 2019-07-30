@@ -1,6 +1,6 @@
 package de.schrader.ktor.webapp
 
-import de.schrader.ktor.ROUTE_PERSON
+import de.schrader.ktor.PERSONS_ENDPOINT
 import de.schrader.ktor.api.model.Person
 import de.schrader.ktor.api.service.PersonService
 import de.schrader.ktor.auth.Session
@@ -25,7 +25,7 @@ fun Route.person(hashFunction: (String) -> String) {
     val userRepository: UserRepository by inject()
     val personService: PersonService by inject()
 
-    route(ROUTE_PERSON) {
+    route(PERSONS_ENDPOINT) {
         get {
             // val user = call.authentication.principal as User
             val user = call.sessions.get<Session>()?.let { userRepository.findById(it.userId) }
@@ -65,7 +65,7 @@ fun Route.person(hashFunction: (String) -> String) {
                     personService.delete(id.toInt())
                 }
             }
-            call.respondRedirect(ROUTE_PERSON)
+            call.respondRedirect(PERSONS_ENDPOINT)
         }
     }
 }

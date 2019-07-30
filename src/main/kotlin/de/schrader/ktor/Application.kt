@@ -1,7 +1,6 @@
 package de.schrader.ktor
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.SerializationFeature
+import de.schrader.ktor.api.model.login
 import de.schrader.ktor.api.repository.PersonRepository
 import de.schrader.ktor.api.repository.PersonRepositoryImpl
 import de.schrader.ktor.api.service.PersonService
@@ -24,17 +23,20 @@ import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.application.log
+import io.ktor.auth.Authentication
+import io.ktor.auth.authenticate
+import io.ktor.auth.jwt.jwt
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.features.StatusPages
 import io.ktor.freemarker.FreeMarker
+import io.ktor.gson.gson
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
-import io.ktor.jackson.jackson
 import io.ktor.locations.Locations
 import io.ktor.locations.locations
 import io.ktor.request.header
@@ -47,29 +49,41 @@ import io.ktor.sessions.SessionTransportTransformerMessageAuthentication
 import io.ktor.sessions.Sessions
 import io.ktor.sessions.cookie
 import org.koin.dsl.module
+import org.koin.experimental.builder.single
 import org.koin.experimental.builder.singleBy
 import org.koin.ktor.ext.Koin
+import org.koin.ktor.ext.inject
 import org.slf4j.event.Level
 import java.net.URI
 import java.util.concurrent.TimeUnit
-import de.schrader.ktor.api.controller.person as person_api
-import de.schrader.ktor.webapp.person as person_webapp
+import de.schrader.ktor.api.controller.person as api_person
+import de.schrader.ktor.webapp.person as webapp_person
 
 const val API_VERSION = "v1"
 const val API_PREFIX = "/api/$API_VERSION"
 
-const val ROUTE_HOME = "/"
-const val ROUTE_ABOUT = "/about"
-const val ROUTE_SIGNIN = "/signin"
-const val ROUTE_SIGNUP = "/signup"
-const val ROUTE_SIGNOUT = "/signout"
-const val ROUTE_PERSON = "/persons"
+const val HOME_ROUTE = "/"
+const val ABOUT_ROUTE = "/about"
+const val SIGNIN_ROUTE = "/signin"
+const val SIGNUP_ROUTE = "/signup"
+const val SIGNOUT_ROUTE = "/signout"
+
+const val LOGIN_ENDPOINT = "/login"
+const val PERSONS_ENDPOINT = "/persons"
 
 const val SESSION_COOKIE_NAME = "KTOR_SESSION"
 
 fun Application.main() {
 
+    val jwtService: JwtService by inject()
+    val userRepository: UserRepository by inject()
+
     log.info("Starting application ...")
+
+    install(Koin) {
+        printLogger()
+        modules(appModule)
+    }
 
     install(DefaultHeaders)
 
@@ -81,13 +95,15 @@ fun Application.main() {
     }
 
     install(ContentNegotiation) {
-        // gson {
-        //    setPrettyPrinting()
-        // }
-        jackson {
-            setSerializationInclusion(JsonInclude.Include.NON_NULL)
-            configure(SerializationFeature.INDENT_OUTPUT, true)
+        gson {
+            setPrettyPrinting()
         }
+
+        // jackson {
+        //    setSerializationInclusion(JsonInclude.Include.NON_NULL)
+        //    configure(SerializationFeature.INDENT_OUTPUT, true)
+        // }
+
         // moshi()
     }
 
@@ -95,14 +111,24 @@ fun Application.main() {
         templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
     }
 
-//    install(Authentication) {
-//        basic(name = "auth") {
-//            realm = "Ktor Server"
-//            validate { credentials ->
-//                if (credentials.password == "${credentials.name}123") User(credentials.name) else null
-//            }
-//        }
-//    }
+    install(Authentication) {
+
+        // basic(name = "auth") {
+        //     realm = "Ktor DEmo"
+        //     validate { credentials ->
+        //         if (credentials.password == "${credentials.name}123") User(credentials.name) else null
+        //     }
+        // }
+
+        jwt("jwt") {
+            verifier(jwtService.verifier)
+            realm = "Ktor Demo"
+            validate {
+                val userId = it.payload.getClaim("id").asString()
+                userRepository.findById(userId)
+            }
+        }
+    }
 
     install(Sessions) {
         cookie<Session>(SESSION_COOKIE_NAME) {
@@ -119,11 +145,6 @@ fun Application.main() {
 //        }
     }
 
-    install(Koin) {
-        printLogger()
-        modules(appModule)
-    }
-
     install(Locations)
 
     Database.init()
@@ -136,20 +157,21 @@ fun Application.main() {
             resources("images")
         }
 
-//      authenticate("auth") {
-
+        // web app
         home()
         about()
-
         signup(hashFunction)
         signin(hashFunction)
         signout()
+        // authenticate("auth") {
+        webapp_person(hashFunction)
+        // }
 
-        person_api()
-        person_webapp(hashFunction)
-
-//      }
-
+        // API
+        login()
+        authenticate("jwt") {
+            api_person()
+        }
     }
 }
 
@@ -170,4 +192,5 @@ private val appModule = module(createdAtStart = true) {
     singleBy<PersonService, PersonServiceImpl>()
     singleBy<PersonRepository, PersonRepositoryImpl>()
     singleBy<UserRepository, UserRepositoryImpl>()
+    single<JwtService>()
 }

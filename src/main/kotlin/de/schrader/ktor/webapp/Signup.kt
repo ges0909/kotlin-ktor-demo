@@ -1,6 +1,6 @@
 package de.schrader.ktor.webapp
 
-import de.schrader.ktor.ROUTE_SIGNUP
+import de.schrader.ktor.SIGNUP_ROUTE
 import de.schrader.ktor.auth.MIN_PASSWORD_LENGTH
 import de.schrader.ktor.auth.MIN_USER_ID_LENGTH
 import de.schrader.ktor.auth.Session
@@ -23,7 +23,7 @@ import io.ktor.sessions.get
 import io.ktor.sessions.sessions
 import org.koin.ktor.ext.inject
 
-@Location(ROUTE_SIGNUP)
+@Location(SIGNUP_ROUTE)
 data class Signup(
     val userId: String? = null,
     val displayName: String? = null,

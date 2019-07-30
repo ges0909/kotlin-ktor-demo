@@ -1,6 +1,6 @@
 package de.schrader.ktor.webapp
 
-import de.schrader.ktor.ROUTE_HOME
+import de.schrader.ktor.HOME_ROUTE
 import de.schrader.ktor.auth.Session
 import de.schrader.ktor.auth.UserRepository
 import io.ktor.application.call
@@ -13,7 +13,7 @@ import io.ktor.sessions.get
 import io.ktor.sessions.sessions
 import org.koin.ktor.ext.inject
 
-@Location(ROUTE_HOME)
+@Location(HOME_ROUTE)
 class Home
 
 fun Route.home() {
